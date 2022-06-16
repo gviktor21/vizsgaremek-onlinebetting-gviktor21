@@ -1,0 +1,2 @@
+//create table bid_app_user (username varchar(255) not null, account_level integer not null, address varchar(255), balance bigint not null, birth_date date, email varchar(255), gender varchar(255), password varchar(255), primary key (username));
+INSERT INTO bid_app_user VALUES ('admin','1','America',0,'1991-11-04','godov@freemail.hu','male','admin'  );
