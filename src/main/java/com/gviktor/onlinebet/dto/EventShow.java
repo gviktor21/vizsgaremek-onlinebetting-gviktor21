@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 @Data
 @NoArgsConstructor
-public class EventCreate {
+public class EventShow {
+    private int eventId;
     private EventType eventType;
     private LocalDate startDate;
     private LocalDate endDate;
