@@ -1,9 +1,8 @@
 package com.gviktor.onlinebet.service;
 
+import com.gviktor.onlinebet.dto.BidCreate;
 import com.gviktor.onlinebet.dto.BidShow;
-import com.gviktor.onlinebet.dto.EventShow;
 import com.gviktor.onlinebet.model.Bid;
-import com.gviktor.onlinebet.model.Event;
 import com.gviktor.onlinebet.repository.BidRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +36,23 @@ public class BidService {
     }
     public BidShow getBidById(int id){
         return mapper.map(bidRepository.findById(id).orElseThrow(),BidShow.class);
+    }
+    public void deleteBidById(int id){
+        bidRepository.deleteById(id);
+    }
+    public boolean addBid(BidCreate bidCreate){
+        //todo check for valid event,username
+        bidRepository.save(mapper.map(bidCreate,Bid.class));
+        return true;
+    }
+    private boolean  validateNewBid(BidCreate bidCreate){
+        return true;
+    }
+    public boolean updateBid(int id,BidCreate bidCreate){
+        //todo check for valid event,username
+        Bid bid = mapper.map(bidCreate,Bid.class);
+        bid.setBidId(id);
+        bidRepository.save(bid);
+        return true;
     }
 }
