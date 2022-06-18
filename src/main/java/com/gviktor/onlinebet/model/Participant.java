@@ -14,7 +14,7 @@ public class Participant {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int participantId;
     private String name;
-    private String eventType;
+    private SportType sportType;
     @OneToMany(mappedBy = "participant")
     private List<SportParticipant> sportParticipant;
 }

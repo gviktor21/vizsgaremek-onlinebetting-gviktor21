@@ -7,7 +7,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class ParticipantCreate {
+public class ParticipantShow {
+    private int participantId;
     private String name;
     private SportType sportType;
 }
