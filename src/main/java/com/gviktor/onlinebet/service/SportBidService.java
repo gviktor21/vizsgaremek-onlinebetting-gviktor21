@@ -1,9 +1,15 @@
 package com.gviktor.onlinebet.service;
 
 import com.gviktor.onlinebet.dto.BidAppUserShow;
+import com.gviktor.onlinebet.dto.SportBidCreate;
 import com.gviktor.onlinebet.dto.SportBidShow;
+import com.gviktor.onlinebet.model.Bid;
 import com.gviktor.onlinebet.model.BidAppUser;
+import com.gviktor.onlinebet.model.Participant;
 import com.gviktor.onlinebet.model.SportBid;
+import com.gviktor.onlinebet.repository.BidRepository;
+import com.gviktor.onlinebet.repository.EventRepository;
+import com.gviktor.onlinebet.repository.ParticipantRepository;
 import com.gviktor.onlinebet.repository.SportBidRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -15,7 +21,14 @@ import java.util.stream.Collectors;
 public class SportBidService {
     private ModelMapper mapper;
     private SportBidRepository sportBidRepository;
+    private ParticipantRepository participantRepository;
+    private BidRepository bidRepository;
 
+    /*
+    *todo: Check if participant is exist
+    *todo: check if the sport eventType is equivalent with the participant sport_type and the participant is attending that sportEvent
+    *todo: refactor for sportParticipant
+    * */
     public SportBidService(ModelMapper mapper, SportBidRepository sportBidRepository) {
         this.mapper = mapper;
         this.sportBidRepository = sportBidRepository;
@@ -31,4 +44,37 @@ public class SportBidService {
         return mapper.map(sportBidRepository.findById(id).orElseThrow(),SportBidShow.class);
     }
 
+    public boolean addSportBid(SportBidCreate sportBidCreate){
+        SportBid sportBid =checkAndGetSportBid(sportBidCreate);
+        if (sportBid!= null){
+            sportBidRepository.save(sportBid);
+            return true;
+        }
+        return false;
+    }
+    public boolean updateSportBid(int id,SportBidCreate sportBidCreate){
+        SportBid previous = sportBidRepository.findById(id).orElseThrow();
+        SportBid sportBid = checkAndGetSportBid(sportBidCreate);
+        if (previous == null || sportBidCreate == null){
+            sportBidRepository.save(sportBid);
+            return true;
+        }
+        return false;
+    }
+    private SportBid checkAndGetSportBid(SportBidCreate sportBidCreate){
+        Participant participant = participantRepository.findById(sportBidCreate.getParticipantId()).orElseThrow();
+        Bid bid = bidRepository.findById(sportBidCreate.getBidId()).orElseThrow();
+        SportBid sportBid = new SportBid();
+        if(participant != null && bid != null) {
+            sportBid.setBid(bid);
+            sportBid.setParticipant(participant);
+            return  sportBid;
+        }
+        sportBid=null;
+        return  sportBid;
+    }
+    public void deleteSportBidById(int id){
+        sportBidRepository.deleteById(id);
+
+    }
 }
