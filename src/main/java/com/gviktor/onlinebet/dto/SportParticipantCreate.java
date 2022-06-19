@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class SportParticipantCreate {
-    private int participant_id;
+    private int participantId;
+    private int eventId;
     private int multiplier;
 }
