@@ -2,12 +2,14 @@ package com.gviktor.onlinebet.controller;
 
 import com.gviktor.onlinebet.dto.ParticipantCreate;
 import com.gviktor.onlinebet.dto.ParticipantShow;
-import com.gviktor.onlinebet.model.Participant;
 import com.gviktor.onlinebet.service.ParticipantService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -20,24 +22,33 @@ public class ParticipantController {
         this.service = service;
     }
     @GetMapping
-    public List<ParticipantShow> getAllParticipant(){
-        return service.getAllParticipant();
+    public ResponseEntity<List<ParticipantShow>> getAllParticipant(){
+        return new ResponseEntity<>(service.getAllParticipant(), HttpStatus.OK);
     }
     @PostMapping
-    public void addParticipant(@RequestBody ParticipantCreate participantCreate, BindingResult bindingResult){
+    public ResponseEntity<Void> addParticipant(@RequestBody @Valid ParticipantCreate participantCreate, BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         service.addParticipant(participantCreate);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    public ParticipantShow getParticipant(@PathVariable int id){
-        return service.getParticipantById(id);
+    public ResponseEntity<ParticipantShow> getParticipant(@PathVariable int id){
+        return new ResponseEntity<>(service.getParticipantById(id),HttpStatus.OK);
     }
     @PutMapping("/{id}")
-    public void modifyParticipant(@PathVariable int id,@RequestBody ParticipantCreate participantCreate){
+    public ResponseEntity<Void> modifyParticipant(@PathVariable int id,@RequestBody ParticipantCreate participantCreate, BindingResult bindingResult){
+        if (bindingResult.hasErrors()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         service.updateParticipant(id,participantCreate);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/{id}")
-    public void deleteParticipant(@PathVariable int id){
+    public ResponseEntity<Void> deleteParticipant(@PathVariable int id){
         service.deleteParticipantById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 }
