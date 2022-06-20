@@ -30,12 +30,18 @@ public class UserController {
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<Void> update(@PathVariable String username,@RequestBody BidAppUserCreate bidAppUserCreate, BindingResult bindingResult){
+    public ResponseEntity<Void> update(@PathVariable String username,@RequestBody @Valid BidAppUserCreate bidAppUserCreate, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         userService.modifyUser(username,bidAppUserCreate);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<Void> addUser(@RequestBody BidAppUserCreate bidAppUserCreate,BindingResult bindingResult){
+    public ResponseEntity<Void> addUser(@RequestBody @Valid BidAppUserCreate bidAppUserCreate,BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         userService.addUser(bidAppUserCreate);
         return new ResponseEntity<>(HttpStatus.OK);
     }
