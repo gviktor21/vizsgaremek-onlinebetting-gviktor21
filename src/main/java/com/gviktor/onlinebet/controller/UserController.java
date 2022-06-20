@@ -4,6 +4,8 @@ import com.gviktor.onlinebet.dto.BidAppUserCreate;
 import com.gviktor.onlinebet.dto.BidAppUserShow;
 import com.gviktor.onlinebet.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,25 +23,28 @@ public class UserController {
     }
 
     @GetMapping
-    public List<BidAppUserShow> getAllUser() {
-        return userService.getAllUser();
+    public ResponseEntity<List<BidAppUserShow>> getAllUser() {
+        return new ResponseEntity<>( userService.getAllUser(), HttpStatus.OK);
     }
 
     @PutMapping("/{username}")
-    public void update(@PathVariable String username,@RequestBody BidAppUserCreate bidAppUserCreate, BindingResult bindingResult){
-
+    public ResponseEntity<Void> update(@PathVariable String username,@RequestBody BidAppUserCreate bidAppUserCreate, BindingResult bindingResult){
+        userService.modifyUser(username,bidAppUserCreate);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @PostMapping
-    public void addUser(@RequestBody BidAppUserCreate bidAppUserCreate,BindingResult bindingResult){
+    public ResponseEntity<Void> addUser(@RequestBody BidAppUserCreate bidAppUserCreate,BindingResult bindingResult){
         userService.addUser(bidAppUserCreate);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("{username}")
-    public void deleteUser(@PathVariable String username){
+    public ResponseEntity<Void> deleteUser(@PathVariable String username){
         userService.deleteUser(username);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/{username}")
-    public BidAppUserShow getUserById (@PathVariable String username){
-        return userService.getUserByUsername(username);
+    public ResponseEntity<BidAppUserShow> getUserById (@PathVariable String username){
+        return new ResponseEntity<>(userService.getUserByUsername(username),HttpStatus.OK);
     }
 
 }
