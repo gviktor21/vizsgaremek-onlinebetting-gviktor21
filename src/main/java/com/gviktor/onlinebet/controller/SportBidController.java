@@ -3,9 +3,12 @@ package com.gviktor.onlinebet.controller;
 import com.gviktor.onlinebet.dto.SportBidCreate;
 import com.gviktor.onlinebet.dto.SportBidShow;
 import com.gviktor.onlinebet.service.SportBidService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -18,27 +21,31 @@ public class SportBidController {
     }
 
     @GetMapping
-    public List<SportBidShow> getAllSportBid(){
-        return service.getSportBids();
+    public ResponseEntity<List<SportBidShow>> getAllSportBid(){
+        return new ResponseEntity<>(service.getSportBids(), HttpStatus.OK);
     }
     @PostMapping
-    public void addSportBid(@RequestBody SportBidCreate sportBidCreate, BindingResult bindingResult){
-        if(service.addSportBid(sportBidCreate)){
-
+    public ResponseEntity<Void> addSportBid(@RequestBody @Valid SportBidCreate sportBidCreate, BindingResult bindingResult){
+        if(service.addSportBid(sportBidCreate) && !bindingResult.hasErrors()){
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
         }
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
     @GetMapping("/{id}")
-    public SportBidShow getSportBid(@PathVariable int id){
-        return service.getSportBidById(id);
+    public ResponseEntity<SportBidShow> getSportBid(@PathVariable int id){
+        return new ResponseEntity<>(service.getSportBidById(id),HttpStatus.OK);
     }
     @PutMapping("/{id}")
-    public void updateSportBid(@PathVariable int id,@RequestBody SportBidCreate sportBidCreate){
-        if(service.updateSportBid(id,sportBidCreate)){
+    public ResponseEntity<Void> updateSportBid(@PathVariable int id,@RequestBody @Valid SportBidCreate sportBidCreate,BindingResult bindingResult){
+        if(service.updateSportBid(id,sportBidCreate) && !bindingResult.hasErrors()){
+            return new ResponseEntity<>(HttpStatus.ACCEPTED);
 
         }
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
     }
     @DeleteMapping("/{id}")
-    public void deleteSportBid(@PathVariable int id){
-         service.deleteSportBidById(id);
+    public ResponseEntity<Void> deleteSportBid(@PathVariable int id){
+        service.deleteSportBidById(id);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

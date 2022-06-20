@@ -9,6 +9,10 @@ import org.springframework.context.annotation.Bean;
 //todo: Event CRUD-OT tesztelni POstmannel
 //todo: Validation-t megcsinálni
 //todo: Visszatérési érték legyen responseEntity
+//todo:loggingolás és swagger hozzáadása
+//todo: flyway hozzáadása
+//todo: docker konténer elkészítése
+
 @SpringBootApplication
 public class OnlinebetApplication {
 
