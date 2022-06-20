@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController("/bid")
@@ -24,7 +25,7 @@ public class BidController {
         return bidService.getAllBids();
     }
     @PostMapping
-    public void addBid(@RequestBody BidCreate bidCreate, BindingResult bindingResult){
+    public void addBid(@RequestBody @Valid BidCreate bidCreate, BindingResult bindingResult){
         if(bidService.addBid(bidCreate)){
 
         }
@@ -34,7 +35,7 @@ public class BidController {
         return bidService.getBidById(id);
     }
     @PutMapping("/{id}")
-    public void updateBid(@PathVariable int id,@RequestBody BidCreate bidCreate, BindingResult bindingResult){
+    public void updateBid(@PathVariable int id, @RequestBody @Valid BidCreate bidCreate, BindingResult bindingResult){
         if (bidService.updateBid(id,bidCreate)){
 
         }

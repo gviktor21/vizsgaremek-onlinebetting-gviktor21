@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -26,11 +27,11 @@ public class UserController {
     }
 
     @PutMapping("/{username}")
-    public void update(@PathVariable String username,@RequestBody BidAppUserCreate bidAppUserCreate, BindingResult bindingResult){
-
+    public void update(@PathVariable String username, @RequestBody @Valid BidAppUserCreate bidAppUserCreate, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){}
     }
     @PostMapping
-    public void addUser(@RequestBody BidAppUserCreate bidAppUserCreate,BindingResult bindingResult){
+    public void addUser(@RequestBody @Valid BidAppUserCreate bidAppUserCreate,BindingResult bindingResult){
         userService.addUser(bidAppUserCreate);
     }
     @DeleteMapping("{username}")
