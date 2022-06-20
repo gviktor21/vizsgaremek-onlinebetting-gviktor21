@@ -14,7 +14,6 @@ public class ParticipantCreate {
     @NotBlank
     @NotNull
     private String name;
-    @NotBlank
     @NotNull
     private SportType sportType;
 }

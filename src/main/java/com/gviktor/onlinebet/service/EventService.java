@@ -35,7 +35,9 @@ public class EventService {
         repository.save(mapper.map(eventCreate,Event.class));
     }
     public void updateEvent(int id,EventCreate eventCreate){
-        repository.save(mapper.map(eventCreate,Event.class));
+        Event event = mapper.map(eventCreate,Event.class);
+        event.setEventId(id);
+        repository.save(event);
     }
     public EventShow getEventById(int id){
         return mapper.map(repository.findById(id).orElseThrow() ,EventShow.class);

@@ -45,7 +45,7 @@ public class SportEventController {
         service.updateSportEvent(id,sportEventCreate);
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @PutMapping("/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSportEvent(@PathVariable int id){
         service.deleteSportEventById(id);
         return new ResponseEntity<>(HttpStatus.OK);

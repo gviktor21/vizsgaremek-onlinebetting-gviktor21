@@ -11,13 +11,10 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 public class EventCreate {
-    @NotBlank
     @NotNull
     private EventType eventType;
-    @NotBlank
     @NotNull
     private LocalDate startDate;
-    @NotBlank
     @NotNull
     private LocalDate endDate;
     @Length(max = 255,message = "Length cannot go beyond 255 characters.")

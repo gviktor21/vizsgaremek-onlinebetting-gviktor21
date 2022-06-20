@@ -6,12 +6,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 //Nagy megcsinalni list
-//todo: Event CRUD-OT tesztelni POstmannel
-//todo: Validation-t megcsinálni
+//todo: Event,Participant,User tested in Postman
+//todo: hozzáadni a maradék service-eket és a Controllereket, kivéve a 6-os és SkandinávLottó-t
 //todo:loggingolás és swagger hozzáadása
 //todo: flyway hozzáadása
 //todo: docker konténer elkészítése
-//todo: if-ekben előrerakni a bindingresultTestelést.
+//todo: if-ekben előrerakni a bindingresultTesztelést.
 
 @SpringBootApplication
 public class OnlinebetApplication {
