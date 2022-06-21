@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 
 //Nagy megcsinalni list
 //todo: Event,Participant,User tested in Postman
-//todo: hozzáadni a maradék service-eket és a Controllereket, kivéve a 6-os és SkandinávLottó-t
+//todo: hozzáadni a maradék service-eket és a Controllereket, kivéve a 6-os és SkandinávLottó-t (Csak akkor lesz leimplementálva ha marad rá idő)
 //todo:loggingolás és swagger hozzáadása
 //todo: flyway hozzáadása
 //todo: docker konténer elkészítése

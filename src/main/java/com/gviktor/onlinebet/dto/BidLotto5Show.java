@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class BidLotto5Show {
-
+    private int bidId;
     private int number1;
     private int number2;
     private int number3;
