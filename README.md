@@ -52,3 +52,10 @@ Ez a backend része egy olyan online fogadást lebonyolító alkalmazásnak (web
 ## A jelnlegi állapot:
 
 A participant, event és az event CRUD-ok tesztelve vannak. A többinél még biztosan változni fog a 'Business Logic'.
+
+## Ami még hiányzik:
+
+1. hozzáadni a maradék service-eket és a Controllereket, kivéve a 6-os és SkandinávLottó-t (Csak akkor lesz leimplementálva ha marad rá idő)
+2. loggingolás és swagger hozzáadása
+3. flyway hozzáadása
+4. docker konténer elkészítése
