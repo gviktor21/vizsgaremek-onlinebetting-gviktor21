@@ -1,6 +1,8 @@
 package com.gviktor.onlinebet.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,11 +63,40 @@ class UserControllerUnitTest {
         return userList;
     }
     @Test
-    void testUpdateValidUser() {
+    void testUpdateValidUser() throws Exception {
+        BidAppUserCreate updateUserbBody = getNewValidUser();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Mockito.when(userService.modifyUser(updateUserbBody.getUsername(),updateUserbBody)).thenReturn(true);
+        mockMvc.perform(put("/user/"+updateUserbBody.getUsername())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateUserbBody))
+                        .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(status().isOk());
     }
     @Test
-    void testUpdateInvalidUser() {
+    void testUpdateInvalidUserReturnsBadRequest() throws Exception {
+        BidAppUserCreate updateUserBody = getNewInValidUser();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Mockito.when(userService.modifyUser(updateUserBody.getUsername(),updateUserBody)).thenReturn(true);
+        mockMvc.perform(put("/user/"+updateUserBody.getUsername())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateUserBody))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
+
+    @Test
+    void testUpdateValidUserSpecsAddedButNotExistReturnsBadRequest() throws Exception {
+        BidAppUserCreate updateUserBody = getNewValidUser();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Mockito.when(userService.modifyUser(updateUserBody.getUsername(),updateUserBody)).thenReturn(false);
+        mockMvc.perform(put("/user/"+updateUserBody.getUsername())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(updateUserBody))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
     @Test
     void testAddValidUser() throws Exception {
         BidAppUserCreate newUser = getNewValidUser();
@@ -102,7 +133,10 @@ class UserControllerUnitTest {
         return newUser;
     }
     @Test
-    void deleteUser() {
+    void deleteUser() throws Exception {
+        String username="whatever";
+        mockMvc.perform(delete("/user/"+username)).andExpect(status().isOk());
+        Mockito.verify(userService).deleteUser(username);
     }
 
     @Test
