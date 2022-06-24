@@ -32,10 +32,9 @@ public class EventController {
     }
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateEvent(@PathVariable int id, @RequestBody  @Valid EventCreate eventCreate, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors() || !service.updateEvent(id,eventCreate)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST) ;
         }
-        service.updateEvent(id,eventCreate);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/{id}")

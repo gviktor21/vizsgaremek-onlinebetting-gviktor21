@@ -39,10 +39,9 @@ public class ParticipantController {
     }
     @PutMapping("/{id}")
     public ResponseEntity<Void> modifyParticipant(@PathVariable int id,@RequestBody ParticipantCreate participantCreate, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors() || !service.updateParticipant(id,participantCreate)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        service.updateParticipant(id,participantCreate);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/{id}")

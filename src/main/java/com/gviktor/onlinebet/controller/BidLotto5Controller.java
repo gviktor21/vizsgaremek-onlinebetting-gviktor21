@@ -42,10 +42,9 @@ public class BidLotto5Controller {
     }
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateLotto5Bid(@PathVariable int id,@RequestBody @Valid BidLotto5Create bidLotto5Create, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
+        if(bindingResult.hasErrors() || !bidLotto5Service.updateBid5Lotto(id,bidLotto5Create)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        bidLotto5Service.updateBid5Lotto(id,bidLotto5Create);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/{id}")

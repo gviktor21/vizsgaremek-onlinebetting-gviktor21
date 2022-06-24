@@ -2,10 +2,7 @@ package com.gviktor.onlinebet.service;
 
 import com.gviktor.onlinebet.dto.BidLotto5Create;
 import com.gviktor.onlinebet.dto.BidLotto5Show;
-import com.gviktor.onlinebet.dto.ParticipantShow;
-import com.gviktor.onlinebet.model.Bid;
 import com.gviktor.onlinebet.model.BidLotto5;
-import com.gviktor.onlinebet.model.Participant;
 import com.gviktor.onlinebet.repository.BidLotto5Repository;
 import com.gviktor.onlinebet.repository.EventRepository;
 import org.modelmapper.ModelMapper;
@@ -52,12 +49,14 @@ public class BidLotto5Service {
         return mapper.map(bidLotto5Repository.findById(id),BidLotto5Show.class);
     }
 
-    public void updateBid5Lotto(int id, BidLotto5Create bidLotto5Create) {
+    public boolean updateBid5Lotto(int id, BidLotto5Create bidLotto5Create) {
         Optional<BidLotto5> bidLotto5 = bidLotto5Repository.findById(id);
         if (bidLotto5.isPresent() && testNumbers(bidLotto5Create)){
             bidLotto5Create.setBidId(id);
             bidLotto5Repository.save(mapper.map(bidLotto5, BidLotto5.class));
+            return true;
         }
+        return false;
     }
     private boolean testNumbers(BidLotto5Create bidLotto5Create){
         Set<Integer> numbers = new HashSet<>();

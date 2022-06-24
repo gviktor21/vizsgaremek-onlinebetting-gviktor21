@@ -31,10 +31,9 @@ public class UserController {
 
     @PutMapping("/{username}")
     public ResponseEntity<Void> update(@PathVariable String username,@RequestBody @Valid BidAppUserCreate bidAppUserCreate, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
+        if(bindingResult.hasErrors() ||  !userService.modifyUser(username,bidAppUserCreate) ){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        userService.modifyUser(username,bidAppUserCreate);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PostMapping

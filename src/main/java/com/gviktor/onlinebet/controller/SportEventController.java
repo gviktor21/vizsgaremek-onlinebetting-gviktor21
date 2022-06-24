@@ -38,11 +38,10 @@ public class SportEventController {
     }
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateSportEvent(@PathVariable int id, @RequestBody @Valid SportEventCreate sportEventCreate,BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors() || !service.updateSportEvent(id,sportEventCreate)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         }
-        service.updateSportEvent(id,sportEventCreate);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @DeleteMapping("/{id}")

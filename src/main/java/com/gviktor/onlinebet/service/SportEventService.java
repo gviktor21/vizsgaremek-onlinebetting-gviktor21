@@ -1,9 +1,7 @@
 package com.gviktor.onlinebet.service;
 
-import com.gviktor.onlinebet.dto.BidShow;
 import com.gviktor.onlinebet.dto.SportEventCreate;
 import com.gviktor.onlinebet.dto.SportEventShow;
-import com.gviktor.onlinebet.model.Bid;
 import com.gviktor.onlinebet.model.SportEvent;
 import com.gviktor.onlinebet.repository.EventRepository;
 import com.gviktor.onlinebet.repository.ParticipantRepository;
@@ -45,9 +43,13 @@ public class SportEventService {
         SportEvent sportEvent= mapper.map(sportEventCreate,SportEvent.class);
         repository.save(sportEvent);
     }
-    public void updateSportEvent(int id,SportEventCreate sportEventCreate){
+    public boolean updateSportEvent(int id, SportEventCreate sportEventCreate){
+        if (!repository.findById(id).isPresent()){
+            return false;
+        }
         SportEvent sportEvent= mapper.map(sportEventCreate,SportEvent.class);
         repository.save(sportEvent);
+        return true;
     }
     public void deleteSportEventById(int id){
         repository.deleteById(id);

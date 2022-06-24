@@ -53,9 +53,11 @@ public class SportBidService {
         return false;
     }
     public boolean updateSportBid(int id,SportBidCreate sportBidCreate){
-        SportBid previous = sportBidRepository.findById(id).orElseThrow();
+        if (!sportBidRepository.findById(id).isPresent()){
+            return false;
+        }
         SportBid sportBid = checkAndGetSportBid(sportBidCreate);
-        if (previous == null || sportBidCreate == null){
+        if (sportBidCreate == null){
             sportBidRepository.save(sportBid);
             return true;
         }

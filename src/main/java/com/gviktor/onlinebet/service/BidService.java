@@ -50,6 +50,9 @@ public class BidService {
     }
     public boolean updateBid(int id,BidCreate bidCreate){
         //todo check for valid event,username
+        if (!bidRepository.findById(id).isPresent()){
+            return false;
+        }
         Bid bid = mapper.map(bidCreate,Bid.class);
         bid.setBidId(id);
         bidRepository.save(bid);

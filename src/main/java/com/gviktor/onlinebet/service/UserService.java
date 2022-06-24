@@ -37,9 +37,13 @@ public class UserService {
         BidAppUser bidAppUser =mapper.map(bidAppUserCreate,BidAppUser.class);
         repository.save(bidAppUser);
     }
-    public void modifyUser(String username,BidAppUserCreate bidAppUserCreate){
+    public boolean modifyUser(String username, BidAppUserCreate bidAppUserCreate){
         BidAppUser bidAppUser =mapper.map(bidAppUserCreate,BidAppUser.class);
-        repository.save(bidAppUser);
+        if (repository.findById(username).isPresent()){
+            repository.save(bidAppUser);
+            return true;
+        }
+        return false;
     }
     public void deleteUser(String username){
         repository.deleteById(username);

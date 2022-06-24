@@ -35,9 +35,13 @@ public class ParticipantService {
         repository.deleteById(id);
     }
 
-    public void updateParticipant(int id,ParticipantCreate participantCreate){
+    public boolean updateParticipant(int id, ParticipantCreate participantCreate){
+        if (!repository.findById(id).isPresent()){
+            return false;
+        }
         Participant participant = mapper.map(participantCreate,Participant.class);
         participant.setParticipantId(id);
         repository.save(participant);
+        return true;
     }
 }

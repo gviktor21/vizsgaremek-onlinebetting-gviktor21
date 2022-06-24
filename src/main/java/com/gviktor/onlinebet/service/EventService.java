@@ -34,10 +34,14 @@ public class EventService {
     public void addEvent(EventCreate eventCreate){
         repository.save(mapper.map(eventCreate,Event.class));
     }
-    public void updateEvent(int id,EventCreate eventCreate){
+    public boolean updateEvent(int id, EventCreate eventCreate){
         Event event = mapper.map(eventCreate,Event.class);
         event.setEventId(id);
+        if (!repository.findById(id).isPresent()){
+            return false;
+        }
         repository.save(event);
+        return true;
     }
     public EventShow getEventById(int id){
         return mapper.map(repository.findById(id).orElseThrow() ,EventShow.class);
