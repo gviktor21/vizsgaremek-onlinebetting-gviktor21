@@ -2,7 +2,6 @@ package com.gviktor.onlinebet.controller;
 
 import com.gviktor.onlinebet.dto.BidLotto5Create;
 import com.gviktor.onlinebet.dto.BidLotto5Show;
-import com.gviktor.onlinebet.model.Lotto5;
 import com.gviktor.onlinebet.service.BidLotto5Service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -37,7 +36,7 @@ public class BidLotto5Controller {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<BidLotto5Show> getAllLotto5Bid(@PathVariable int id){
+    public ResponseEntity<BidLotto5Show> getLotto5ById(@PathVariable int id){
         return new ResponseEntity<>(bidLotto5Service.getBidLotto5ById(id),HttpStatus.OK);
     }
     @PutMapping("/{id}")
