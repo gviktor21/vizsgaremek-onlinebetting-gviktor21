@@ -12,7 +12,8 @@ import org.springframework.context.annotation.Bean;
 //todo: flyway hozzáadása
 //todo: docker konténer elkészítése
 //todo: if-ekben előrerakni a bindingresultTesztelést.
-
+//todo: legyen a bidType EventType vagy elhagyható
+//todo: tesztmetódusok nevét checkolni, eléírni test szót nem ártana
 @SpringBootApplication
 public class OnlinebetApplication {
 
