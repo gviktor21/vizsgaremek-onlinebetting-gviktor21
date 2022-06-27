@@ -38,7 +38,7 @@ public class ParticipantController {
         return new ResponseEntity<>(service.getParticipantById(id),HttpStatus.OK);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Void> modifyParticipant(@PathVariable int id,@RequestBody ParticipantCreate participantCreate, BindingResult bindingResult){
+    public ResponseEntity<Void> modifyParticipant(@PathVariable int id,@RequestBody @Valid ParticipantCreate participantCreate, BindingResult bindingResult){
         if (bindingResult.hasErrors() || !service.updateParticipant(id,participantCreate)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

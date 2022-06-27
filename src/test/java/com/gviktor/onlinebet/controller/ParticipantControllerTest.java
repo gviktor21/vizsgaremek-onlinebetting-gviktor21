@@ -7,6 +7,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gviktor.onlinebet.dto.ParticipantCreate;
 import com.gviktor.onlinebet.dto.ParticipantShow;
 import com.gviktor.onlinebet.model.SportType;
@@ -18,6 +20,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -60,7 +63,7 @@ class ParticipantControllerTest {
     }
     private ParticipantCreate getInvalidParticipant(){
         ParticipantCreate participantCreate = new ParticipantCreate();
-        participantCreate.setName("Viktor");
+        participantCreate.setName("");
         participantCreate.setSportType(SportType.FORMULAONE);
         return participantCreate;
     }
@@ -79,18 +82,81 @@ class ParticipantControllerTest {
     }
 
     @Test
-    void addParticipant() throws Exception {
+    void addValidParticipant() throws Exception {
+        ParticipantCreate participantCreate = getValidParticipant();
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(post("/participant")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(participantCreate))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void addInvalidParticipant() throws Exception {
+        ParticipantCreate participantCreate = getInvalidParticipant();
+        ObjectMapper objectMapper = new ObjectMapper();
+        mockMvc.perform(post("/participant")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(participantCreate))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     void getParticipant() throws Exception {
+        ParticipantShow participantShow = getParticipants().get(0);
+        Mockito.when(service.getParticipantById(participantShow.getParticipantId())).thenReturn(participantShow);
+        mockMvc.perform(get("/participant/"+participantShow.getParticipantId()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.participantId",Matchers.is(1)))
+                .andExpect(jsonPath("$.sportType", Matchers.is("roadracecycling".toUpperCase())))
+                .andExpect(jsonPath("$.name",Matchers.is("Viktor")));
     }
 
     @Test
-    void modifyParticipant() throws Exception {
+    void modifyValidParticipant() throws Exception {
+        ParticipantCreate participantUpdateDao = getValidParticipant();
+        int id=1;
+        ObjectMapper objectMapper = new ObjectMapper();
+        Mockito.when(service.updateParticipant(id,participantUpdateDao)).thenReturn(true);
+        mockMvc.perform(put("/participant/"+id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(participantUpdateDao))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+    }
+    @Test
+    void modifyInvalidParticipant() throws Exception {
+        ParticipantCreate participantUpdateDao = getInvalidParticipant();
+        int id=1;
+        ObjectMapper objectMapper = new ObjectMapper();
+        Mockito.when(service.updateParticipant(id,participantUpdateDao)).thenReturn(true);
+        mockMvc.perform(put("/participant/"+id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(participantUpdateDao))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
-    void deleteParticipant() {
+    void modifyNotExistingParticipantWithValidFields() throws Exception {
+        ParticipantCreate participantUpdateDao = getValidParticipant();
+        int id=999;
+        ObjectMapper objectMapper = new ObjectMapper();
+        Mockito.when(service.updateParticipant(id,participantUpdateDao)).thenReturn(false);
+        mockMvc.perform(put("/participant/"+id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(participantUpdateDao))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+
+    }
+    @Test
+    void deleteParticipant() throws Exception {
+        int id=1;
+        mockMvc.perform(delete("/participant/"+id))
+        .andExpect(status().isOk());
+        Mockito.verify(service).deleteParticipantById(id);
     }
 }
