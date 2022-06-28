@@ -9,10 +9,8 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 public class SportBidCreate {
-    @NotBlank
     @NotNull
-    private int bidId;
-    @NotBlank
+    private Integer bidId;
     @NotNull
-    private int participantId;
+    private Integer participantId;
 }

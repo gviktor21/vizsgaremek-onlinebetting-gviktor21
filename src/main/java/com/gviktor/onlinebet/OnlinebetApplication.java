@@ -13,7 +13,8 @@ import org.springframework.context.annotation.Bean;
 //todo: if-ekben előrerakni a bindingresultTesztelést.
 //todo: legyen a bidType EventType vagy elhagyható
 //todo: tesztmetódusok nevét checkolni, eléírni test szót nem ártana
-//todo: BidLotto5 hozzáadásnál tesztelni hogy létezik e a bid-id
+//todo TestData-ba kirakni testadatokat
+
 @SpringBootApplication
 public class OnlinebetApplication {
 

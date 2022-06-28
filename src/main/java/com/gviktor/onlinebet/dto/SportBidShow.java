@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class SportBidShow {
-    BidShow bidShow;
-    ParticipantShow participantShow;
+    BidShow bid;
+    ParticipantShow participant;
 }

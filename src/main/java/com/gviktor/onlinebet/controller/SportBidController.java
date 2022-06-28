@@ -27,9 +27,9 @@ public class SportBidController {
     @PostMapping
     public ResponseEntity<Void> addSportBid(@RequestBody @Valid SportBidCreate sportBidCreate, BindingResult bindingResult){
         if(service.addSportBid(sportBidCreate) && !bindingResult.hasErrors()){
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     @GetMapping("/{id}")
     public ResponseEntity<SportBidShow> getSportBid(@PathVariable int id){
@@ -38,10 +38,10 @@ public class SportBidController {
     @PutMapping("/{id}")
     public ResponseEntity<Void> updateSportBid(@PathVariable int id,@RequestBody @Valid SportBidCreate sportBidCreate,BindingResult bindingResult){
         if(service.updateSportBid(id,sportBidCreate) && !bindingResult.hasErrors()){
-            return new ResponseEntity<>(HttpStatus.ACCEPTED);
+            return new ResponseEntity<>(HttpStatus.OK);
 
         }
-        return new ResponseEntity<>(HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteSportBid(@PathVariable int id){
