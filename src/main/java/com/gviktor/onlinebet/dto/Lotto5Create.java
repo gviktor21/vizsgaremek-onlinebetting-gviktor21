@@ -6,23 +6,27 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
 public class Lotto5Create {
+
+    @NotNull
+    private Integer eventId;
     @Min(value=1)
     @Max(value=90)
-    private int number1;
+    private Integer number1;
     @Min(value=1)
     @Max(value=90)
-    private int number2;
+    private Integer number2;
     @Min(value=1)
     @Max(value=90)
-    private int number3;
+    private Integer number3;
     @Min(value=1)
     @Max(value=90)
-    private int number4;
+    private Integer number4;
     @Min(value=1)
     @Max(value=90)
-    private int number5;
+    private Integer number5;
 }
