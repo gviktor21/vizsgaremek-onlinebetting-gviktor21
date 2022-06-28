@@ -28,10 +28,9 @@ public class BidLotto5Controller {
     }
     @PostMapping
     public ResponseEntity<Void> addLotto5Bid(@RequestBody @Valid BidLotto5Create bidLotto5Create, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
+        if(bindingResult.hasErrors() || !bidLotto5Service.addBid5Lotto(bidLotto5Create)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        bidLotto5Service.addBid5Lotto(bidLotto5Create);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     

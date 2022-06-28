@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gviktor.onlinebet.dto.BidLotto5Create;
 import com.gviktor.onlinebet.dto.BidLotto5Show;
 import com.gviktor.onlinebet.service.BidLotto5Service;
@@ -16,6 +17,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -45,12 +47,12 @@ class BidLotto5ControllerTest {
         bidLotto5Show1.setNumber5(10);
 
         BidLotto5Show bidLotto5Show2 = new BidLotto5Show();
-        bidLotto5Show1.setBidId(2);
-        bidLotto5Show1.setNumber1(11);
-        bidLotto5Show1.setNumber2(45);
-        bidLotto5Show1.setNumber3(5);
-        bidLotto5Show1.setNumber4(4);
-        bidLotto5Show1.setNumber5(28);
+        bidLotto5Show2.setBidId(2);
+        bidLotto5Show2.setNumber1(11);
+        bidLotto5Show2.setNumber2(45);
+        bidLotto5Show2.setNumber3(5);
+        bidLotto5Show2.setNumber4(4);
+        bidLotto5Show2.setNumber5(28);
 
         bidLotto5Shows.add(bidLotto5Show1);
         bidLotto5Shows.add(bidLotto5Show2);
@@ -84,7 +86,7 @@ class BidLotto5ControllerTest {
                 .andExpect(jsonPath("$[0].number1",Matchers.is(12)))
                 .andExpect(jsonPath("$[0].bidId",Matchers.is(1)))
                 .andExpect(jsonPath("$[0].number4",Matchers.is(4)))
-                .andExpect(jsonPath("$[1].number2",Matchers.is(22)))
+                .andExpect(jsonPath("$[1].number2",Matchers.is(45)))
                 .andExpect(jsonPath("$[1].bidId",Matchers.is(2)))
                 .andExpect(jsonPath("$[1].number5",Matchers.is(28)));
 
@@ -93,17 +95,34 @@ class BidLotto5ControllerTest {
     @Test
     void addValidLotto5Bid() throws Exception {
         BidLotto5Create validBidLotto5 = getValidLotto5Bid();
-
-        //Mockito.when(bidLotto5Service.addBid5Lotto()).thenReturn(true);
-        //mockMvc.perform(post(url))
-
+        ObjectMapper objectMapper = new ObjectMapper();
+        Mockito.when(bidLotto5Service.addBid5Lotto(validBidLotto5)).thenReturn(true);
+        mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(validBidLotto5))
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
 
     @Test
     void addInvalidLotto5Bid() throws Exception {
-
+        BidLotto5Create invalidBidLotto5 = getInvalidLotto5Bid();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Mockito.when(bidLotto5Service.addBid5Lotto(invalidBidLotto5)).thenReturn(true);
+        mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidBidLotto5))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
-
+    @Test
+    void addValidLotto5BidButBidOrEventNotExists() throws Exception {
+        BidLotto5Create validBidLotto5 = getValidLotto5Bid();
+        ObjectMapper objectMapper = new ObjectMapper();
+        Mockito.when(bidLotto5Service.addBid5Lotto(validBidLotto5)).thenReturn(false);
+        mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validBidLotto5))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
     @Test
     void getLotto5ById() throws Exception {
         BidLotto5Show bidLotto5Show = getLottoBids().get(1);
@@ -117,15 +136,36 @@ class BidLotto5ControllerTest {
 
     @Test
     void updateValidLotto5Bid() throws Exception {
-
+        BidLotto5Create validBidLotto5 = getValidLotto5Bid();
+        int id = 1;
+        ObjectMapper objectMapper = new ObjectMapper();
+        Mockito.when(bidLotto5Service.updateBid5Lotto(id,validBidLotto5)).thenReturn(true);
+        mockMvc.perform(put(url+"/"+id).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validBidLotto5))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
     }
     @Test
     void updateInvalidLotto5Bid() throws Exception {
-
+        BidLotto5Create invalidBidLotto5 = getInvalidLotto5Bid();
+        int id = 1;
+        ObjectMapper objectMapper = new ObjectMapper();
+        Mockito.when(bidLotto5Service.updateBid5Lotto(id,invalidBidLotto5)).thenReturn(true);
+        mockMvc.perform(put(url+"/"+id).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(invalidBidLotto5))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
     @Test
     void updateNotExistingLotto5BidWithValidData() throws Exception {
-
+        BidLotto5Create validBidLotto5 = getValidLotto5Bid();
+        int id = 1;
+        ObjectMapper objectMapper = new ObjectMapper();
+        Mockito.when(bidLotto5Service.updateBid5Lotto(id,validBidLotto5)).thenReturn(false);
+        mockMvc.perform(put(url+"/"+id).contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(validBidLotto5))
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

@@ -11,23 +11,18 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 public class BidLotto5Create {
     private int bidId;
-    @NotBlank
     @Min(value=1)
     @Max(value=90)
     private int number1;
-    @NotBlank
     @Min(value=1)
     @Max(value=90)
     private int number2;
-    @NotBlank
     @Min(value=1)
     @Max(value=90)
     private int number3;
-    @NotBlank
     @Min(value=1)
     @Max(value=90)
     private int number4;
-    @NotBlank
     @Min(value=1)
     @Max(value=90)
     private int number5;
