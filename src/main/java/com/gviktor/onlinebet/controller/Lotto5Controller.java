@@ -26,7 +26,7 @@ public class Lotto5Controller {
         return new ResponseEntity<>(service.getAllLotto5(), HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Lotto5Show> getEvent(@PathVariable int id) {
+    public ResponseEntity<Lotto5Show> getLotto5EventResult(@PathVariable int id) {
         return new ResponseEntity<>(service.getLotto5ById(id),HttpStatus.OK);
     }
     @PostMapping
@@ -36,14 +36,14 @@ public class Lotto5Controller {
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<Void> modifyLotto5Result(@RequestBody @Valid Lotto5Create lotto5Create,@PathVariable int id ,BindingResult bindingResult){
         if (bindingResult.hasErrors() || !service.updateLotto5Result(id, lotto5Create)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteLotto5Result(@PathVariable int id){
         service.deleteLotto5ResultById(id);
         return new ResponseEntity<>(HttpStatus.OK);
