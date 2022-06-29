@@ -2,8 +2,11 @@ package com.gviktor.onlinebet.controller;
 
 import com.gviktor.onlinebet.dto.BidAppUserShow;
 import com.gviktor.onlinebet.dto.BidShow;
+import com.gviktor.onlinebet.dto.EventShow;
 import com.gviktor.onlinebet.dto.ParticipantShow;
 import com.gviktor.onlinebet.model.BidAppUser;
+import com.gviktor.onlinebet.model.Event;
+import com.gviktor.onlinebet.model.EventType;
 import com.gviktor.onlinebet.model.SportType;
 
 import java.time.LocalDate;
@@ -68,5 +71,44 @@ public class TestDatas {
         user2.setUsername("admin");
         userList.add(user1);userList.add(user2);
         return userList;
+    }
+
+    public static List<EventShow> getEvents(){
+        List<EventShow> events = new ArrayList<>();
+        EventShow eventShow1 = new EventShow();
+        eventShow1.setEventId(1);
+        eventShow1.setEventType(EventType.SPORT);
+        eventShow1.setStartDate(LocalDate.of(1111,11,11));
+        EventShow eventShow2 = new EventShow();
+        eventShow2.setEventId(2);
+        eventShow2.setEventType(EventType.SPORT);
+        eventShow2.setStartDate(LocalDate.of(2000,10,4));
+        EventShow eventShow3 = new EventShow();
+        eventShow3.setEventId(3);
+        eventShow3.setEventType(EventType.LOTTO5);
+        eventShow3.setStartDate(LocalDate.of(2030,1,1));
+        events.add(eventShow1);
+        events.add(eventShow2);
+        events.add(eventShow3);
+        return events;
+    }
+    public static List<Event>getEventEntities(){
+        List<Event> events = new ArrayList<>();
+        Event eventShow1 = new Event();
+        eventShow1.setEventId(1);
+        eventShow1.setEventType(EventType.SPORT);
+        eventShow1.setStartDate(LocalDate.of(1111,11,11));
+        Event eventShow2 = new Event();
+        eventShow2.setEventId(2);
+        eventShow2.setEventType(EventType.SPORT);
+        eventShow2.setStartDate(LocalDate.of(2000,10,4));
+        Event eventShow3 = new Event();
+        eventShow3.setEventId(3);
+        eventShow3.setEventType(EventType.LOTTO5);
+        eventShow3.setStartDate(LocalDate.of(2030,1,1));
+        events.add(eventShow1);
+        events.add(eventShow2);
+        events.add(eventShow3);
+        return events;
     }
 }

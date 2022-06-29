@@ -1,6 +1,7 @@
 package com.gviktor.onlinebet.service;
 
 import com.gviktor.onlinebet.controller.TestDatas;
+import com.gviktor.onlinebet.dto.BidAppUserCreate;
 import com.gviktor.onlinebet.dto.BidAppUserShow;
 import com.gviktor.onlinebet.model.BidAppUser;
 import com.gviktor.onlinebet.repository.UserRepository;
@@ -52,12 +53,36 @@ class UserServiceTest {
 
     @Test
     void addUser() {
+        BidAppUserCreate bidAppUserCreate = new BidAppUserCreate();
+        BidAppUser savedEntity = new BidAppUser();
+        Mockito.when(modelMapper.map(bidAppUserCreate,BidAppUser.class)).thenReturn(savedEntity);
+
+        userService.addUser(bidAppUserCreate);
+        Mockito.verify(userRepository,Mockito.times(1)).save(savedEntity);
     }
 
     @Test
-    void modifyUser() {
-    }
+    void modifyExistingUser() {
+        BidAppUserCreate bidAppUserCreate = new BidAppUserCreate();
+        BidAppUser savedEntity = new BidAppUser();
+        String username= "Gyuribacsi";
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(savedEntity));
+        Mockito.when(modelMapper.map(bidAppUserCreate,BidAppUser.class)).thenReturn(savedEntity);
 
+        assertTrue(userService.modifyUser(username,bidAppUserCreate));
+        Mockito.verify(userRepository,Mockito.times(1)).save(savedEntity);
+    }
+    @Test
+    void modifyNonExistingUser() {
+        BidAppUserCreate bidAppUserCreate = new BidAppUserCreate();
+        BidAppUser savedEntity = new BidAppUser();
+        String username= "Gyuribacsi";
+        Mockito.when(userRepository.findById(username)).thenReturn(Optional.empty());
+        Mockito.when(modelMapper.map(bidAppUserCreate,BidAppUser.class)).thenReturn(savedEntity);
+
+        assertFalse(userService.modifyUser(username,bidAppUserCreate));
+        Mockito.verify(userRepository,Mockito.times(1)).save(savedEntity);
+    }
     @Test
     void deleteUser() {
         String id="id";
