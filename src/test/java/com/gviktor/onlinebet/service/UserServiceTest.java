@@ -81,7 +81,7 @@ class UserServiceTest {
         Mockito.when(modelMapper.map(bidAppUserCreate,BidAppUser.class)).thenReturn(savedEntity);
 
         assertFalse(userService.modifyUser(username,bidAppUserCreate));
-        Mockito.verify(userRepository,Mockito.times(1)).save(savedEntity);
+        Mockito.verify(userRepository,Mockito.times(0)).save(savedEntity);
     }
     @Test
     void deleteUser() {

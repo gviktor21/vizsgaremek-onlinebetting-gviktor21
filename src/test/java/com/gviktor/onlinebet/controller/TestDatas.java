@@ -4,16 +4,14 @@ import com.gviktor.onlinebet.dto.BidAppUserShow;
 import com.gviktor.onlinebet.dto.BidShow;
 import com.gviktor.onlinebet.dto.EventShow;
 import com.gviktor.onlinebet.dto.ParticipantShow;
-import com.gviktor.onlinebet.model.BidAppUser;
-import com.gviktor.onlinebet.model.Event;
-import com.gviktor.onlinebet.model.EventType;
-import com.gviktor.onlinebet.model.SportType;
+import com.gviktor.onlinebet.model.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
 public class TestDatas {
+
     public static List<BidShow> getBids(){
         List<BidShow> bids = new ArrayList<>();
         BidShow bidShow1= new BidShow();
@@ -50,6 +48,26 @@ public class TestDatas {
         participants.add(participantShow2);
         return participants;
     }
+
+    public static List<Participant> getParticipantEntities(){
+        List<Participant> participants = new ArrayList<>();
+
+        Participant participantShow1 = new Participant();
+        participantShow1.setParticipantId(1);
+        participantShow1.setName("Viktor");
+        participantShow1.setSportType(SportType.ROADRACECYCLING);
+
+        Participant participantShow2 = new Participant();
+        participantShow2.setParticipantId(2);
+        participantShow2.setName("Soros");
+        participantShow2.setSportType(SportType.FORMULAONE);
+
+        participants.add(participantShow1);
+        participants.add(participantShow2);
+        return participants;
+    }
+
+
     public static List<BidAppUserShow> getUsers(){
         List<BidAppUserShow> userList = new ArrayList<>();
         BidAppUserShow user1 = new BidAppUserShow();
@@ -111,4 +129,5 @@ public class TestDatas {
         events.add(eventShow3);
         return events;
     }
+
 }

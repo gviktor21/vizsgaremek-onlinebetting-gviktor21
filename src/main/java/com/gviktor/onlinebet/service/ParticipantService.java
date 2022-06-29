@@ -36,10 +36,10 @@ public class ParticipantService {
     }
 
     public boolean updateParticipant(int id, ParticipantCreate participantCreate){
+        Participant participant = mapper.map(participantCreate,Participant.class);
         if (!repository.findById(id).isPresent()){
             return false;
         }
-        Participant participant = mapper.map(participantCreate,Participant.class);
         participant.setParticipantId(id);
         repository.save(participant);
         return true;
