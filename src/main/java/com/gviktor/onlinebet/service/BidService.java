@@ -3,59 +3,82 @@ package com.gviktor.onlinebet.service;
 import com.gviktor.onlinebet.dto.BidCreate;
 import com.gviktor.onlinebet.dto.BidShow;
 import com.gviktor.onlinebet.model.Bid;
+import com.gviktor.onlinebet.model.BidAppUser;
+import com.gviktor.onlinebet.model.Event;
 import com.gviktor.onlinebet.repository.BidRepository;
+import com.gviktor.onlinebet.repository.EventRepository;
+import com.gviktor.onlinebet.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
-/**
- * Check if the user have the money to bet. The user is valid.
- * Check if the event is exists.
- * Check if the bet not for a past event.
- * Then remove the amount from the balance of the user.
- * */
+
 @Service
 public class BidService {
     private BidRepository bidRepository;
+    private UserRepository userRepository;
+    private EventRepository eventRepository;
     private ModelMapper mapper;
 
     @Autowired
-    public BidService(BidRepository bidRepository, ModelMapper modelMapper) {
+    public BidService(BidRepository bidRepository, ModelMapper modelMapper, UserRepository userRepository,EventRepository eventRepository) {
         this.bidRepository = bidRepository;
+        this.userRepository= userRepository;
+        this.eventRepository= eventRepository;
         this.mapper = modelMapper;
     }
-    private List<BidShow> convertList(List<Bid> bids){
-        return  bids.stream().map(a->mapper.map(a, BidShow.class)).collect(Collectors.toList());
+
+    private List<BidShow> convertList(List<Bid> bids) {
+        return bids.stream().map(a -> mapper.map(a, BidShow.class)).collect(Collectors.toList());
     }
-    public List<BidShow> getAllBids(){
+
+    public List<BidShow> getAllBids() {
         return convertList(bidRepository.findAll());
     }
-    public BidShow getBidById(int id){
-        return mapper.map(bidRepository.findById(id).orElseThrow(),BidShow.class);
+
+    public BidShow getBidById(int id) {
+        return mapper.map(bidRepository.findById(id).orElseThrow(), BidShow.class);
     }
-    public void deleteBidById(int id){
+
+    public void deleteBidById(int id) {
         bidRepository.deleteById(id);
     }
-    public boolean addBid(BidCreate bidCreate){
+
+    public boolean addBid(BidCreate bidCreate) {
         //todo check for valid event,username
-        bidRepository.save(mapper.map(bidCreate,Bid.class));
+        bidRepository.save(mapper.map(bidCreate, Bid.class));
         return true;
     }
-    private boolean  validateNewBid(BidCreate bidCreate){
-        return true;
+
+    private boolean validateNewBid(BidCreate bidCreate) {
+        Optional<BidAppUser> bidAppUser = userRepository.findById(bidCreate.getUsername());
+        Optional<Event> event = eventRepository.findById(bidCreate.getEventId());
+        return bidAppUser.isPresent() && event.isPresent()&&isNotPastEvent(event.get(),bidCreate)  && haveUserEnoughMoney(bidCreate,bidAppUser.get());
     }
-    public boolean updateBid(int id,BidCreate bidCreate){
+    private boolean haveUserEnoughMoney(BidCreate bidCreate,BidAppUser bidAppUser){
+        return bidAppUser.getBalance()-bidCreate.getBidAmount()>=0;
+    }
+    private boolean isNotPastEvent(Event event, BidCreate bidCreate){
+        return bidCreate.getDate().isBefore(event.getStartDate());
+    }
+    public boolean updateBid(int id, BidCreate bidCreate) {
         //todo check for valid event,username
-        if (!bidRepository.findById(id).isPresent()){
+        if (!bidRepository.findById(id).isPresent()) {
             return false;
         }
-        Bid bid = mapper.map(bidCreate,Bid.class);
+        Bid bid = mapper.map(bidCreate, Bid.class);
         bid.setBidId(id);
         bidRepository.save(bid);
         return true;
+    }
+    private void updateUser(BidAppUser bidAppUser,Bid bid){
+        bidAppUser.setBalance(bidAppUser.getBalance()-bid.getBidAmount());
+        userRepository.save(bidAppUser);
     }
 }

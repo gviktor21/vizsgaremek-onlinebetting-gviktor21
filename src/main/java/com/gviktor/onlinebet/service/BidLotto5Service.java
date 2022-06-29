@@ -27,9 +27,10 @@ public class BidLotto5Service {
     private ModelMapper mapper;
 
     @Autowired
-    public BidLotto5Service(BidLotto5Repository bidLotto5Repository, EventRepository eventRepository, ModelMapper modelMapper) {
+    public BidLotto5Service(BidLotto5Repository bidLotto5Repository, EventRepository eventRepository, ModelMapper modelMapper, BidRepository bidRepository) {
         this.bidLotto5Repository = bidLotto5Repository;
         this.eventRepository = eventRepository;
+        this.bidRepository = bidRepository;
         this.mapper = modelMapper;
     }
     private List<BidLotto5Show> convertList(List<BidLotto5> lotto5Bids){
