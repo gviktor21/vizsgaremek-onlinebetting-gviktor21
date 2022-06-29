@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SportParticipantShow {
     private ParticipantShow participant;
-    private Event event;
+    private SportEventShow event;
 }

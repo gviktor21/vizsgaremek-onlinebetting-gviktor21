@@ -1,7 +1,9 @@
 package com.gviktor.onlinebet.controller;
 
+import com.gviktor.onlinebet.dto.BidAppUserShow;
 import com.gviktor.onlinebet.dto.BidShow;
 import com.gviktor.onlinebet.dto.ParticipantShow;
+import com.gviktor.onlinebet.model.BidAppUser;
 import com.gviktor.onlinebet.model.SportType;
 
 import java.time.LocalDate;
@@ -44,5 +46,27 @@ public class TestDatas {
         participants.add(participantShow1);
         participants.add(participantShow2);
         return participants;
+    }
+    public static List<BidAppUserShow> getUsers(){
+        List<BidAppUserShow> userList = new ArrayList<>();
+        BidAppUserShow user1 = new BidAppUserShow();
+        user1.setUsername("viktor");
+        user1.setPassword("passw");
+        BidAppUserShow user2 = new BidAppUserShow();
+        user2.setPassword("passw2");
+        user2.setUsername("admin");
+        userList.add(user1);userList.add(user2);
+        return userList;
+    }
+    public static List<BidAppUser> getUsersEntity(){
+        List<BidAppUser> userList = new ArrayList<>();
+        BidAppUser user1 = new BidAppUser();
+        user1.setUsername("viktor");
+        user1.setPassword("passw");
+        BidAppUser user2 = new BidAppUser();
+        user2.setPassword("passw2");
+        user2.setUsername("admin");
+        userList.add(user1);userList.add(user2);
+        return userList;
     }
 }
