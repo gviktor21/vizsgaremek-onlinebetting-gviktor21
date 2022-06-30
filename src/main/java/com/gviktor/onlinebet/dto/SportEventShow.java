@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 public class SportEventShow {
     private int eventId;
     private SportType sportType;
-    private SportParticipant winner;
+    //Note it might need SportParticipant but use Participant for prevent recursion
+    private ParticipantShow winner;
 }

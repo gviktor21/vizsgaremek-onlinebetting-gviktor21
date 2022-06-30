@@ -10,6 +10,8 @@ import javax.validation.constraints.NotNull;
 @Data
 @NoArgsConstructor
 public class SportEventCreate {
+    @NotNull
+    private Integer eventId;
     @NotBlank
     @NotNull
     private SportType sportType;
