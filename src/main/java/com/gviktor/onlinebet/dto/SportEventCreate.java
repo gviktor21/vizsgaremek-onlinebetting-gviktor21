@@ -12,7 +12,6 @@ import javax.validation.constraints.NotNull;
 public class SportEventCreate {
     @NotNull
     private Integer eventId;
-    @NotBlank
     @NotNull
     private SportType sportType;
     private int winnerId;

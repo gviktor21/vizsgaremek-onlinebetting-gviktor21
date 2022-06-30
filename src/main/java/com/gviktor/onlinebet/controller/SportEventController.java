@@ -24,12 +24,11 @@ public class SportEventController {
     public ResponseEntity<List<SportEventShow>> getAllSportEvents(){
         return new ResponseEntity<>(service.getAllSportEvent(), HttpStatus.OK);
     }
-    @PostMapping("/{id}")
-    public ResponseEntity<Void> addSportEventToEventIdentifiedByItsId(@PathVariable int id, @RequestBody @Valid SportEventCreate sportEventCreate, BindingResult bindingResult){
-        if (bindingResult.hasErrors()){
+    @PostMapping("")
+    public ResponseEntity<Void> addSportEventToEventIdentifiedByItsId( @RequestBody @Valid SportEventCreate sportEventCreate, BindingResult bindingResult){
+        if (bindingResult.hasErrors() || ! service.addSportEvent(sportEventCreate)){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        service.addSportEvent(id,sportEventCreate);
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/{id}")

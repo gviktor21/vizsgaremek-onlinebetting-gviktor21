@@ -16,6 +16,7 @@ import org.springframework.context.annotation.Bean;
 //todo: TestData-ba kirakni testadatokat
 //todo: Service Tesztek, amíg 60%-
 //todo: Pár IntegrációsTeszt.
+//todo: Pár mappert átnézni.
 @SpringBootApplication
 public class OnlinebetApplication {
 

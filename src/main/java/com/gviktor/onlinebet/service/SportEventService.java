@@ -37,11 +37,12 @@ public class SportEventService {
     public SportEventShow getSportEventById(int id){
         return mapper.map(repository.findById(id).orElseThrow(),SportEventShow.class);
     }
-    public  void addSportEvent(int id,SportEventCreate sportEventCreate){
+    public boolean addSportEvent(SportEventCreate sportEventCreate){
         //todo check if there is such an event in the database
         //todo check if the two is te same event type
         SportEvent sportEvent= mapper.map(sportEventCreate,SportEvent.class);
         repository.save(sportEvent);
+        return false;
     }
     public boolean updateSportEvent(int id, SportEventCreate sportEventCreate){
         if (!repository.findById(id).isPresent()){
