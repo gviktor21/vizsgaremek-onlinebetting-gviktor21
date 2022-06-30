@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestDatas {
-
     public static List<BidShow> getBids(){
         List<BidShow> bids = new ArrayList<>();
         BidShow bidShow1= new BidShow();
@@ -30,7 +29,6 @@ public class TestDatas {
         bids.add(bidShow2);
         return bids;
     }
-
     public static List<ParticipantShow> getParticipants(){
         List<ParticipantShow> participants = new ArrayList<>();
 
@@ -48,7 +46,6 @@ public class TestDatas {
         participants.add(participantShow2);
         return participants;
     }
-
     public static List<Participant> getParticipantEntities(){
         List<Participant> participants = new ArrayList<>();
 
@@ -73,9 +70,14 @@ public class TestDatas {
         BidAppUserShow user1 = new BidAppUserShow();
         user1.setUsername("viktor");
         user1.setPassword("passw");
+        user1.setEmail("valami@freemail.hu");
+        user1.setAccountLevel(1);
         BidAppUserShow user2 = new BidAppUserShow();
         user2.setPassword("passw2");
         user2.setUsername("admin");
+        user2.setEmail("valami@freemail.hu");
+        user2.setAccountLevel(1);
+
         userList.add(user1);userList.add(user2);
         return userList;
     }
@@ -84,9 +86,13 @@ public class TestDatas {
         BidAppUser user1 = new BidAppUser();
         user1.setUsername("viktor");
         user1.setPassword("passw");
+        user1.setEmail("valami@freemail.hu");
+        user1.setAccountLevel(1);
         BidAppUser user2 = new BidAppUser();
         user2.setPassword("passw2");
         user2.setUsername("admin");
+        user2.setEmail("valami@freemail.hu");
+        user2.setAccountLevel(1);
         userList.add(user1);userList.add(user2);
         return userList;
     }
@@ -129,5 +135,4 @@ public class TestDatas {
         events.add(eventShow3);
         return events;
     }
-
 }

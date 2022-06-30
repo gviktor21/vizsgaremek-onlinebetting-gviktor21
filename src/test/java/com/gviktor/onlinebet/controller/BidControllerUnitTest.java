@@ -63,6 +63,8 @@ public class BidControllerUnitTest {
         bidCreate.setDate(LocalDate.now().plusDays(2));
         bidCreate.setPrize(2400);
         bidCreate.setBidType("Sport");
+        bidCreate.setUsername("valaki");
+        bidCreate.setEventId(1);
         return bidCreate;
     }
     private BidCreate getInvalidBid(){
