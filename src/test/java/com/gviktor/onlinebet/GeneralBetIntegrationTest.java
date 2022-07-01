@@ -2,15 +2,13 @@ package com.gviktor.onlinebet;
 
 import com.gviktor.onlinebet.controller.TestDatas;
 import com.gviktor.onlinebet.dto.*;
-import com.gviktor.onlinebet.model.Event;
-import com.gviktor.onlinebet.model.EventType;
-import org.junit.jupiter.api.Test;
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -18,6 +16,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class GeneralBetIntegrationTest {
 
     @Autowired
@@ -31,7 +30,6 @@ public class GeneralBetIntegrationTest {
         EventCreate eventCreate = TestDatas.getValidEventToPost();
         postEvent(eventCreate,urlEvent);
     }
-
 
     private void postUserWithMoney(){
         BidAppUserCreate bidAppUserCreate =TestDatas.getUsersToPost().get(0);
@@ -56,8 +54,10 @@ public class GeneralBetIntegrationTest {
     }
     private List<BidShow> getExpectedBids(){
         List<BidShow> expectedBids= new ArrayList<>();
+
         BidAppUserShow bidAppUserShow = TestDatas.getUsers().get(0);
-        bidAppUserShow.setBalance(1000);
+        bidAppUserShow.setBalance(850);
+
         BidShow bid1 = new BidShow();
         bid1.setBidId(1);
         bid1.setUser(bidAppUserShow);
@@ -79,11 +79,11 @@ public class GeneralBetIntegrationTest {
 
         expectedBids.add(bid1);
         expectedBids.add(bid2);
-
         return expectedBids;
     }
 
     @Test
+    @Order(1)
     public void getAllBid(){
         postATestEvent();
         postUserWithMoney();
@@ -91,9 +91,54 @@ public class GeneralBetIntegrationTest {
         for (BidCreate postedBid : postedBids) {
             postBid(postedBid,url);
         }
+
         ResponseEntity<BidShow[]> responseEntity = testRestTemplate.getForEntity(url,BidShow[].class);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         hasTheSameElements(responseEntity.getBody());
+    }
+
+    @Test
+    @Order(2)
+    public void getBidById(){
+        String getUrl =url+"/"+getExpectedBids().get(1).getBidId();
+        ResponseEntity<BidShow> responseEntity = testRestTemplate.getForEntity(getUrl,BidShow.class);
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        assertEquals(getExpectedBids().get(1),responseEntity.getBody());
+    }
+    @Test
+    @Order(3)
+    public void addBidIfUserHaveInSufficientMoneyThenReturnBadRequest(){
+        BidCreate expensiveBid = getPostedBids().get(0);
+        expensiveBid.setBidAmount(TestDatas.getUsers().get(0).getBalance() +100000);
+        HttpEntity<BidCreate> httpEntity = createHttpEntity(expensiveBid);
+        ResponseEntity<Void> responseEntity= testRestTemplate.exchange(url,HttpMethod.POST,httpEntity,Void.class);
+        assertEquals(HttpStatus.BAD_REQUEST,responseEntity.getStatusCode());
+    }
+
+    @Test
+    @Order(4)
+    public void addBidForPastEventReturnsBadRequest(){
+    }
+
+    @Test
+    @Order(5)
+    public void testUpdateBid(){
+
+    }
+
+    @Test
+    @Order(6)
+    public void testDeleteBidById(){
+        ResponseEntity<BidShow[]> responseEntity = testRestTemplate.getForEntity(url,BidShow[].class);
+        int expectedSize=responseEntity.getBody().length;
+
+        testRestTemplate.delete(url+"/"+getExpectedBids().get(0).getBidId());
+        responseEntity = testRestTemplate.getForEntity(url,BidShow[].class);
+        assertEquals(--expectedSize,responseEntity.getBody().length);
+
+        testRestTemplate.delete(url+"/"+getExpectedBids().get(1).getBidId());
+        responseEntity = testRestTemplate.getForEntity(url,BidShow[].class);
+        assertEquals(--expectedSize,responseEntity.getBody().length);
     }
 
     private void postBid(BidCreate bid, String url){

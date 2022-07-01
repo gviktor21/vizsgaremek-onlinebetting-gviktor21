@@ -60,6 +60,7 @@ public class BidService {
             bid.setBidEvent(eventRepository.findById(bidCreate.getEventId()).get());
             mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
             bidRepository.saveAndFlush(bid);
+            updateUser(userRepository.findById(bidCreate.getUsername()).get(),bid);
             return true;
         }
         return false;
@@ -84,7 +85,6 @@ public class BidService {
         Bid bid = mapper.map(bidCreate, Bid.class);
         bid.setBidId(id);
         bidRepository.save(bid);
-        //updateUser(userRepository.findById(bidCreate.getUsername()).get(),bid);
         return true;
     }
     private void updateUser(BidAppUser bidAppUser,Bid bid){
