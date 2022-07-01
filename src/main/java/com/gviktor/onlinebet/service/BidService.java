@@ -9,6 +9,8 @@ import com.gviktor.onlinebet.repository.BidRepository;
 import com.gviktor.onlinebet.repository.EventRepository;
 import com.gviktor.onlinebet.repository.UserRepository;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
+import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,14 +53,22 @@ public class BidService {
     }
 
     public boolean addBid(BidCreate bidCreate) {
-        //todo check for valid event,username
-        bidRepository.save(mapper.map(bidCreate, Bid.class));
-        return true;
+        if (validateNewBid(bidCreate)){
+            mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+            Bid bid = mapper.map(bidCreate,Bid.class);
+            bid.setUser(userRepository.findById(bidCreate.getUsername()).get());
+            bid.setBidEvent(eventRepository.findById(bidCreate.getEventId()).get());
+            mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
+            bidRepository.saveAndFlush(bid);
+            return true;
+        }
+        return false;
     }
 
     private boolean validateNewBid(BidCreate bidCreate) {
         Optional<BidAppUser> bidAppUser = userRepository.findById(bidCreate.getUsername());
         Optional<Event> event = eventRepository.findById(bidCreate.getEventId());
+
         return bidAppUser.isPresent() && event.isPresent()&&isNotPastEvent(event.get(),bidCreate)  && haveUserEnoughMoney(bidCreate,bidAppUser.get());
     }
     private boolean haveUserEnoughMoney(BidCreate bidCreate,BidAppUser bidAppUser){
@@ -68,13 +78,13 @@ public class BidService {
         return bidCreate.getDate().isBefore(event.getStartDate());
     }
     public boolean updateBid(int id, BidCreate bidCreate) {
-        //todo check for valid event,username
-        if (!bidRepository.findById(id).isPresent()) {
+        if (!bidRepository.findById(id).isPresent() || !validateNewBid(bidCreate)) {
             return false;
         }
         Bid bid = mapper.map(bidCreate, Bid.class);
         bid.setBidId(id);
         bidRepository.save(bid);
+        //updateUser(userRepository.findById(bidCreate.getUsername()).get(),bid);
         return true;
     }
     private void updateUser(BidAppUser bidAppUser,Bid bid){

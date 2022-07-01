@@ -29,7 +29,7 @@ public class BidController {
     }
     @PostMapping
     public ResponseEntity<Void> addBid(@RequestBody @Valid BidCreate bidCreate, BindingResult bindingResult){
-        if(bidService.addBid(bidCreate) && !bindingResult.hasErrors()){
+        if(!bindingResult.hasErrors() && bidService.addBid(bidCreate)){
             return new ResponseEntity<>(HttpStatus.OK);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

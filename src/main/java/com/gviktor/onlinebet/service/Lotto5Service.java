@@ -11,8 +11,10 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,16 +45,26 @@ public class Lotto5Service {
 
     public boolean addLotto5Result(Lotto5Create lotto5Create) {
         Optional<Event> event = eventRepository.findById(lotto5Create.getEventId());
-        if(event.isPresent() && event.get().getEventType()== EventType.LOTTO5){
+        if(event.isPresent() && event.get().getEventType()== EventType.LOTTO5 && testNumbers(lotto5Create)){
             repository.save(mapper.map(lotto5Create,Lotto5.class));
             return true;
         }
         return false;
     }
+    private boolean testNumbers(Lotto5Create bidLotto5Create){
+        Set<Integer> numbers = new HashSet<>();
+        int lottoType=5;
+        numbers.add(bidLotto5Create.getNumber1());
+        numbers.add(bidLotto5Create.getNumber2());
+        numbers.add(bidLotto5Create.getNumber3());
+        numbers.add(bidLotto5Create.getNumber4());
+        numbers.add(bidLotto5Create.getNumber5());
+        return numbers.size()==lottoType;
+    }
 
     public boolean updateLotto5Result(int id, Lotto5Create lotto5Create) {
         Optional<Event> event = eventRepository.findById(lotto5Create.getEventId());
-        if(event.isPresent() && event.get().getEventType()== EventType.LOTTO5){
+        if(event.isPresent() && event.get().getEventType()== EventType.LOTTO5 && testNumbers(lotto5Create)){
             lotto5Create.setEventId(id);
             repository.save(mapper.map(lotto5Create,Lotto5.class));
             return true;

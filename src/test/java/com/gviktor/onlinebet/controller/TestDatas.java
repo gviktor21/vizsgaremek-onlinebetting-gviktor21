@@ -1,9 +1,6 @@
 package com.gviktor.onlinebet.controller;
 
-import com.gviktor.onlinebet.dto.BidAppUserShow;
-import com.gviktor.onlinebet.dto.BidShow;
-import com.gviktor.onlinebet.dto.EventShow;
-import com.gviktor.onlinebet.dto.ParticipantShow;
+import com.gviktor.onlinebet.dto.*;
 import com.gviktor.onlinebet.model.*;
 
 import java.time.LocalDate;
@@ -134,5 +131,56 @@ public class TestDatas {
         events.add(eventShow2);
         events.add(eventShow3);
         return events;
+    }
+
+    public static List<BidAppUserCreate> getUsersToPost(){
+        List<BidAppUserCreate> userList = new ArrayList<>();
+        BidAppUserCreate user1 = new BidAppUserCreate();
+        user1.setUsername("viktor");
+        user1.setPassword("passw");
+        user1.setEmail("valami@freemail.hu");
+        user1.setAccountLevel(1);
+        BidAppUserCreate user2 = new BidAppUserCreate();
+        user2.setPassword("passw2");
+        user2.setUsername("admin");
+        user2.setEmail("valami@freemail.hu");
+        user2.setAccountLevel(1);
+        userList.add(user1);userList.add(user2);
+        return userList;
+    }
+    public static BidCreate getValidBid(){
+        BidCreate bidCreate = new BidCreate();
+        bidCreate.setBidAmount(100);
+        bidCreate.setDate(LocalDate.now().plusDays(2));
+        bidCreate.setPrize(2400);
+        bidCreate.setBidType("Lotto");
+        bidCreate.setUsername(getUsersToPost().get(0).getUsername());
+        bidCreate.setEventId(1);
+        return bidCreate;
+    }
+    static BidCreate getInvalidBid(){
+        BidCreate bidCreate = new BidCreate();
+        bidCreate.setBidAmount(-100);
+        bidCreate.setDate(LocalDate.now().plusDays(2));
+        bidCreate.setPrize(2400);
+        bidCreate.setBidType("Sport");
+        return bidCreate;
+    }
+    public static EventCreate getValidEventToPost() {
+        EventCreate eventCreate = new EventCreate();
+        eventCreate.setDescription("Lottohuzas");
+        eventCreate.setStartDate(LocalDate.now().plusMonths(1));
+        eventCreate.setEndDate(LocalDate.now().plusMonths(1));
+        eventCreate.setEventType(EventType.LOTTO5);
+        return eventCreate;
+    }
+    public static EventShow getValidEventToPostShowAsFirstEvent() {
+        EventShow eventCreate = new EventShow();
+        eventCreate.setEventId(1); //might couse errors
+        eventCreate.setDescription("Lottohuzas");
+        eventCreate.setStartDate(LocalDate.now().plusMonths(1));
+        eventCreate.setEndDate(LocalDate.now().plusMonths(1));
+        eventCreate.setEventType(EventType.LOTTO5);
+        return eventCreate;
     }
 }

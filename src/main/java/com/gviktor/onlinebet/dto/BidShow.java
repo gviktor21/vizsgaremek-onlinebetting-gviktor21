@@ -12,8 +12,8 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class BidShow {
     private int bidId;
-    private BidAppUser user;
-    private Event bidEvent;
+    private BidAppUserShow user;
+    private EventShow bidEvent;
     private String bidType;
     private long bidAmount;
     private long prize;

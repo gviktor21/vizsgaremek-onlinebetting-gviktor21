@@ -14,6 +14,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/lotto5")
 public class Lotto5Controller {
+    //todo: test for redundant numbers
     private Lotto5Service service;
 
     @Autowired

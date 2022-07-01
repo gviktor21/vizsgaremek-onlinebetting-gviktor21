@@ -24,33 +24,99 @@ public class UserIntegrationTest {
     TestRestTemplate testRestTemplate;
     private String url="/user";
 
-    private List<BidAppUserCreate> getUsersToPost(){
-        List<BidAppUserCreate> userList = new ArrayList<>();
-        BidAppUserCreate user1 = new BidAppUserCreate();
-        user1.setUsername("viktor");
-        user1.setPassword("passw");
-        user1.setEmail("valami@freemail.hu");
-        user1.setAccountLevel(1);
-        BidAppUserCreate user2 = new BidAppUserCreate();
-        user2.setPassword("passw2");
-        user2.setUsername("admin");
-        user2.setEmail("valami@freemail.hu");
-        user2.setAccountLevel(1);
-        userList.add(user1);userList.add(user2);
-        return userList;
-    }
     @Test
     public void testGetAll(){
-        List<BidAppUserCreate> usersToPost= getUsersToPost();
+        addUsers();
 
-        for (BidAppUserCreate bidAppUserCreate : usersToPost) {
-            postBidUsers(bidAppUserCreate,url);
-        }
-        
         ResponseEntity<BidAppUserShow[]> responseEntity = testRestTemplate.getForEntity(url,BidAppUserShow[].class);
         assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
 
         hasTheSameElements(responseEntity.getBody());
+    }
+
+    @Test
+    public void testGetById(){
+        addUsers();
+        ResponseEntity<BidAppUserShow> responseEntity = testRestTemplate.getForEntity(url+"/"+TestDatas.getUsersToPost().get(0).getUsername(),BidAppUserShow.class);
+        BidAppUserShow result = responseEntity.getBody();
+        BidAppUserShow expected = TestDatas.getUsers().get(0);
+        assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
+        assertEquals(result.getPassword(),expected.getPassword());
+        assertEquals(result.getUsername(),expected.getUsername());
+    }
+
+    @Test
+    public void testDeleteUserById(){
+        addUsers();
+        testRestTemplate.delete(url+"/"+TestDatas.getUsersToPost().get(0).getUsername());
+        ResponseEntity<BidAppUserShow[]> responseEntity = testRestTemplate.getForEntity(url,BidAppUserShow[].class);
+        assertEquals(responseEntity.getBody().length,1);
+        testRestTemplate.delete(url+"/"+TestDatas.getUsersToPost().get(1).getUsername());
+        responseEntity = testRestTemplate.getForEntity(url,BidAppUserShow[].class);
+        assertEquals(responseEntity.getBody().length,0);
+    }
+    @Test
+    public void testDeleteNotExistingUserNoExceptionDrop(){
+        addUsers();
+        testRestTemplate.delete(url+"/"+"whatever");
+        ResponseEntity<BidAppUserShow[]> responseEntity = testRestTemplate.getForEntity(url,BidAppUserShow[].class);
+        assertEquals(responseEntity.getBody().length,2);
+    }
+    @Test
+    public void testUpdateExistingUserReturnStatus200(){
+        addUsers();
+
+        BidAppUserCreate userToUpdate = updateTestUser();
+
+        HttpEntity<BidAppUserCreate> httpEntity = createHttpEntity(userToUpdate);
+        String putUrl =url+"/"+userToUpdate.getUsername();
+        ResponseEntity<Void> responseEntity= testRestTemplate.exchange(putUrl,HttpMethod.PUT,httpEntity,Void.class);
+        assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
+        //test
+        BidAppUserShow result = testRestTemplate.getForEntity(putUrl,BidAppUserShow.class).getBody();
+        assertEquals(result.getPassword(),userToUpdate.getPassword());
+        assertEquals(result.getAccountLevel(),userToUpdate.getAccountLevel());
+        assertEquals(result.getBalance(),userToUpdate.getBalance());
+    }
+
+    private BidAppUserCreate updateTestUser() {
+        BidAppUserCreate userToUpdate= TestDatas.getUsersToPost().get(0);
+        userToUpdate.setPassword("newpassw");
+        userToUpdate.setAccountLevel(2);
+        userToUpdate.setBalance(100);
+        return userToUpdate;
+    }
+    //exchange(URI url, HttpMethod method, HttpEntity<?> requestEntity, ParameterizedTypeReference<T> responseType)
+
+    @Test
+    public void testUpdateNotExistingUserReturnBadRequest(){
+        addUsers();
+
+        BidAppUserCreate userToUpdate = updateTestUser();
+        userToUpdate.setUsername("whatever");
+        HttpEntity<BidAppUserCreate> httpEntity = createHttpEntity(userToUpdate);
+        String putUrl =url+"/"+userToUpdate.getUsername();
+        ResponseEntity<Void> responseEntity= testRestTemplate.exchange(putUrl,HttpMethod.PUT,httpEntity,Void.class);
+        assertEquals(HttpStatus.BAD_REQUEST,responseEntity.getStatusCode());
+
+    }
+    @Test
+    public void testUpdateExistingUserNotLetUsernameChanged(){
+        addUsers();
+
+        BidAppUserCreate userToUpdate = updateTestUser();
+        String putUrl =url+"/"+userToUpdate.getUsername();
+        userToUpdate.setUsername("whatever");
+        HttpEntity<BidAppUserCreate> httpEntity = createHttpEntity(userToUpdate);
+        ResponseEntity<Void> responseEntity= testRestTemplate.exchange(putUrl,HttpMethod.PUT,httpEntity,Void.class);
+        assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
+    }
+    private void addUsers() {
+        List<BidAppUserCreate> usersToPost= TestDatas.getUsersToPost();
+
+        for (BidAppUserCreate bidAppUserCreate : usersToPost) {
+            postBidUsers(bidAppUserCreate,url);
+        }
     }
 
     private void postBidUsers(BidAppUserCreate bidAppUserCreate,String url){
@@ -71,8 +137,4 @@ public class UserIntegrationTest {
         assertTrue(listActual.size()== listExpected.size() && listExpected.containsAll(listActual) && listActual.containsAll(listExpected));
     }
 
-    @Test
-    void contextLoads(){
-
-    }
 }

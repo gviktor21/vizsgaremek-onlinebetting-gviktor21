@@ -40,7 +40,7 @@ public class EventService {
         if (!repository.findById(id).isPresent()){
             return false;
         }
-        repository.save(event);
+        repository.saveAndFlush(event);
         return true;
     }
     public EventShow getEventById(int id){

@@ -57,24 +57,6 @@ public class BidControllerUnitTest {
         return bids;
     }
 
-    private BidCreate getValidBid(){
-        BidCreate bidCreate = new BidCreate();
-        bidCreate.setBidAmount(100);
-        bidCreate.setDate(LocalDate.now().plusDays(2));
-        bidCreate.setPrize(2400);
-        bidCreate.setBidType("Sport");
-        bidCreate.setUsername("valaki");
-        bidCreate.setEventId(1);
-        return bidCreate;
-    }
-    private BidCreate getInvalidBid(){
-        BidCreate bidCreate = new BidCreate();
-        bidCreate.setBidAmount(-100);
-        bidCreate.setDate(LocalDate.now().plusDays(2));
-        bidCreate.setPrize(2400);
-        bidCreate.setBidType("Sport");
-        return bidCreate;
-    }
     @Test
     void getAllBids() throws Exception {
         List<BidShow> bids= getBids();
@@ -93,7 +75,7 @@ public class BidControllerUnitTest {
 
     @Test
     void addValidBid() throws Exception {
-        BidCreate validBid= getValidBid();
+        BidCreate validBid= TestDatas.getValidBid();
         Mockito.when(bidService.addBid(validBid)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -105,7 +87,7 @@ public class BidControllerUnitTest {
     }
     @Test
     void addInvalidBid() throws Exception {
-        BidCreate invalidBid= getInvalidBid();
+        BidCreate invalidBid= TestDatas.getInvalidBid();
         Mockito.when(bidService.addBid(invalidBid)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -128,7 +110,7 @@ public class BidControllerUnitTest {
 
     @Test
     void updateValidBid() throws Exception {
-        BidCreate validBid= getValidBid();
+        BidCreate validBid= TestDatas.getValidBid();
         int id = 1;
         Mockito.when(bidService.updateBid(id,validBid)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
@@ -141,7 +123,7 @@ public class BidControllerUnitTest {
     }
     @Test
     void updateInvalidBid() throws Exception {
-        BidCreate invalidBid= getInvalidBid();
+        BidCreate invalidBid= TestDatas.getInvalidBid();
         int id = 1;
         Mockito.when(bidService.updateBid(id,invalidBid)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
@@ -155,7 +137,7 @@ public class BidControllerUnitTest {
 
     @Test
     void updateNoneExistentBidWithValidData() throws Exception {
-        BidCreate validBid= getInvalidBid();
+        BidCreate validBid= TestDatas.getInvalidBid();
         int id = 444;
         Mockito.when(bidService.updateBid(id,validBid)).thenReturn(false);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
