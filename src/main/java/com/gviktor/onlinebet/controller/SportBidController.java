@@ -1,7 +1,7 @@
 package com.gviktor.onlinebet.controller;
 
-import com.gviktor.onlinebet.dto.SportBidCreate;
-import com.gviktor.onlinebet.dto.SportBidShow;
+import com.gviktor.onlinebet.dto.create.SportBidCreateDto;
+import com.gviktor.onlinebet.dto.show.SportBidShowDto;
 import com.gviktor.onlinebet.service.SportBidService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +24,13 @@ public class SportBidController {
     private Logger logger = LoggerFactory.getLogger(SportBidController.class);
 
     @GetMapping
-    public ResponseEntity<List<SportBidShow>> getAllSportBid(){
+    public ResponseEntity<List<SportBidShowDto>> getAllSportBid(){
         logger.info("http get request invoked to: '/sportBid'");
         return new ResponseEntity<>(service.getSportBids(), HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<Void> addSportBid(@RequestBody @Valid SportBidCreate sportBidCreate, BindingResult bindingResult){
-        if(!bindingResult.hasErrors() && service.addSportBid(sportBidCreate) ){
+    public ResponseEntity<Void> addSportBid(@RequestBody @Valid SportBidCreateDto sportBidCreateDto, BindingResult bindingResult){
+        if(!bindingResult.hasErrors() && service.addSportBid(sportBidCreateDto) ){
             logger.info("http post request invoked to: '/sportBid' SportBid added");
             return new ResponseEntity<>(HttpStatus.OK);
         }
@@ -38,13 +38,13 @@ public class SportBidController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<SportBidShow> getSportBid(@PathVariable int id){
+    public ResponseEntity<SportBidShowDto> getSportBid(@PathVariable int id){
         logger.info("http get request invoked to: '/sportBid/{id}'");
         return new ResponseEntity<>(service.getSportBidById(id),HttpStatus.OK);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateSportBid(@PathVariable int id,@RequestBody @Valid SportBidCreate sportBidCreate,BindingResult bindingResult){
-        if(!bindingResult.hasErrors() && service.updateSportBid(id,sportBidCreate) ){
+    public ResponseEntity<Void> updateSportBid(@PathVariable int id, @RequestBody @Valid SportBidCreateDto sportBidCreateDto, BindingResult bindingResult){
+        if(!bindingResult.hasErrors() && service.updateSportBid(id, sportBidCreateDto) ){
             logger.info("http put request invoked to: '/sportBid/{id} sportBid updated'");
 
             return new ResponseEntity<>(HttpStatus.OK);

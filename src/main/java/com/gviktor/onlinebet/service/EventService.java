@@ -1,7 +1,7 @@
 package com.gviktor.onlinebet.service;
 
-import com.gviktor.onlinebet.dto.EventCreate;
-import com.gviktor.onlinebet.dto.EventShow;
+import com.gviktor.onlinebet.dto.create.EventCreateDto;
+import com.gviktor.onlinebet.dto.show.EventShowDto;
 import com.gviktor.onlinebet.model.Event;
 import com.gviktor.onlinebet.repository.EventRepository;
 import org.modelmapper.ModelMapper;
@@ -21,21 +21,21 @@ public class EventService {
         this.repository = repository;
         this.mapper = mapper;
     }
-    private List<EventShow> convertList(List<Event> events){
-        return  events.stream().map(a->mapper.map(a, EventShow.class)).collect(Collectors.toList());
+    private List<EventShowDto> convertList(List<Event> events){
+        return  events.stream().map(a->mapper.map(a, EventShowDto.class)).collect(Collectors.toList());
     }
 
-    public List<EventShow> getAllEvents(){
+    public List<EventShowDto> getAllEvents(){
         return convertList(repository.findAll());
     }
     public void deleteEventById(int id){
         repository.deleteById(id);
     }
-    public void addEvent(EventCreate eventCreate){
-        repository.save(mapper.map(eventCreate,Event.class));
+    public void addEvent(EventCreateDto eventCreateDto){
+        repository.save(mapper.map(eventCreateDto,Event.class));
     }
-    public boolean updateEvent(int id, EventCreate eventCreate){
-        Event event = mapper.map(eventCreate,Event.class);
+    public boolean updateEvent(int id, EventCreateDto eventCreateDto){
+        Event event = mapper.map(eventCreateDto,Event.class);
         event.setEventId(id);
         if (!repository.findById(id).isPresent()){
             return false;
@@ -43,7 +43,7 @@ public class EventService {
             repository.save(event);
         return true;
     }
-    public EventShow getEventById(int id){
-        return mapper.map(repository.findById(id).orElseThrow() ,EventShow.class);
+    public EventShowDto getEventById(int id){
+        return mapper.map(repository.findById(id).orElseThrow() , EventShowDto.class);
     }
 }

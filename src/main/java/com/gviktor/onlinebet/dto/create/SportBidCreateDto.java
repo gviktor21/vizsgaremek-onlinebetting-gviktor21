@@ -1,4 +1,4 @@
-package com.gviktor.onlinebet.dto;
+package com.gviktor.onlinebet.dto.create;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-public class SportBidCreate {
+public class SportBidCreateDto {
     @NotNull
     private Integer bidId;
     @NotNull

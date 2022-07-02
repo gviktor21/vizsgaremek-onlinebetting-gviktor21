@@ -8,8 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gviktor.onlinebet.dto.Lotto5Create;
-import com.gviktor.onlinebet.dto.Lotto5Show;
+import com.gviktor.onlinebet.dto.create.Lotto5CreateDto;
+import com.gviktor.onlinebet.dto.show.Lotto5ShowDto;
 import com.gviktor.onlinebet.service.Lotto5Service;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -25,8 +25,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 
 @WebMvcTest(Lotto5Controller.class)
 @ExtendWith(SpringExtension.class)
@@ -39,55 +37,55 @@ class Lotto5ControllerTest {
     MockMvc mockMvc;
     private String url ="/lotto5";
 
-    private List<Lotto5Show> getLotto5results(){
-        List<Lotto5Show> lotto5List = new ArrayList<>();
+    private List<Lotto5ShowDto> getLotto5results(){
+        List<Lotto5ShowDto> lotto5List = new ArrayList<>();
 
-        Lotto5Show lotto5Show1 =new Lotto5Show();
-        lotto5Show1.setEventId(1);
-        lotto5Show1.setNumber1(31);
-        lotto5Show1.setNumber2(11);
-        lotto5Show1.setNumber3(2);
-        lotto5Show1.setNumber4(9);
-        lotto5Show1.setNumber5(55);
+        Lotto5ShowDto lotto5ShowDto1 =new Lotto5ShowDto();
+        lotto5ShowDto1.setEventId(1);
+        lotto5ShowDto1.setNumber1(31);
+        lotto5ShowDto1.setNumber2(11);
+        lotto5ShowDto1.setNumber3(2);
+        lotto5ShowDto1.setNumber4(9);
+        lotto5ShowDto1.setNumber5(55);
 
-        Lotto5Show lotto5Show2 =new Lotto5Show();
-        lotto5Show2.setEventId(2);
-        lotto5Show2.setNumber1(31);
-        lotto5Show2.setNumber2(11);
-        lotto5Show2.setNumber3(2);
-        lotto5Show2.setNumber4(9);
-        lotto5Show2.setNumber5(55);
+        Lotto5ShowDto lotto5ShowDto2 =new Lotto5ShowDto();
+        lotto5ShowDto2.setEventId(2);
+        lotto5ShowDto2.setNumber1(31);
+        lotto5ShowDto2.setNumber2(11);
+        lotto5ShowDto2.setNumber3(2);
+        lotto5ShowDto2.setNumber4(9);
+        lotto5ShowDto2.setNumber5(55);
 
-        lotto5List.add(lotto5Show1);
-        lotto5List.add(lotto5Show2);
+        lotto5List.add(lotto5ShowDto1);
+        lotto5List.add(lotto5ShowDto2);
         return lotto5List;
     }
 
-    private Lotto5Create getValidLotto5Create(){
-     Lotto5Create lotto5Create = new Lotto5Create();
-     lotto5Create.setEventId(1);
-     lotto5Create.setNumber1(61);
-     lotto5Create.setNumber2(55);
-     lotto5Create.setNumber3(72);
-     lotto5Create.setNumber4(26);
-     lotto5Create.setNumber5(4);
-     return lotto5Create;
+    private Lotto5CreateDto getValidLotto5Create(){
+     Lotto5CreateDto lotto5CreateDto = new Lotto5CreateDto();
+     lotto5CreateDto.setEventId(1);
+     lotto5CreateDto.setNumber1(61);
+     lotto5CreateDto.setNumber2(55);
+     lotto5CreateDto.setNumber3(72);
+     lotto5CreateDto.setNumber4(26);
+     lotto5CreateDto.setNumber5(4);
+     return lotto5CreateDto;
 
     }
-    private Lotto5Create getInvalidLotto5Create(){
-        Lotto5Create lotto5Create = new Lotto5Create();
-        lotto5Create.setEventId(1);
-        lotto5Create.setNumber1(61);
-        lotto5Create.setNumber2(666);
-        lotto5Create.setNumber3(72);
-        lotto5Create.setNumber4(26);
-        lotto5Create.setNumber5(4);
-        return lotto5Create;
+    private Lotto5CreateDto getInvalidLotto5Create(){
+        Lotto5CreateDto lotto5CreateDto = new Lotto5CreateDto();
+        lotto5CreateDto.setEventId(1);
+        lotto5CreateDto.setNumber1(61);
+        lotto5CreateDto.setNumber2(666);
+        lotto5CreateDto.setNumber3(72);
+        lotto5CreateDto.setNumber4(26);
+        lotto5CreateDto.setNumber5(4);
+        return lotto5CreateDto;
     }
 
     @Test
     void getAllLotto5Beds() throws Exception{
-        List<Lotto5Show> lotto5Results= getLotto5results();
+        List<Lotto5ShowDto> lotto5Results= getLotto5results();
         Mockito.when(lotto5Service.getAllLotto5()).thenReturn(lotto5Results);
 
         mockMvc.perform(get(url))
@@ -103,10 +101,10 @@ class Lotto5ControllerTest {
 
     @Test
     void getLotto5EventResult() throws Exception {
-        Lotto5Show lotto5Show = getLotto5results().get(0);
-        Mockito.when(lotto5Service.getLotto5ById(lotto5Show.getEventId())).thenReturn(lotto5Show);
+        Lotto5ShowDto lotto5ShowDto = getLotto5results().get(0);
+        Mockito.when(lotto5Service.getLotto5ById(lotto5ShowDto.getEventId())).thenReturn(lotto5ShowDto);
 
-        mockMvc.perform(get(url+"/"+lotto5Show.getEventId()))
+        mockMvc.perform(get(url+"/"+ lotto5ShowDto.getEventId()))
                 .andExpect(jsonPath("$.number2",Matchers.is(11)))
                 .andExpect(jsonPath("$.eventId",Matchers.is(1)))
                 .andExpect(jsonPath("$.number3",Matchers.is(2)))
@@ -115,7 +113,7 @@ class Lotto5ControllerTest {
 
     @Test
     void addValidLotto5Result() throws Exception {
-        Lotto5Create validLotto5 = getValidLotto5Create();
+        Lotto5CreateDto validLotto5 = getValidLotto5Create();
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(lotto5Service.addLotto5Result(validLotto5)).thenReturn(true);
 
@@ -127,7 +125,7 @@ class Lotto5ControllerTest {
 
     @Test
     void addInvalidLotto5Result() throws Exception {
-        Lotto5Create invalidLotto5 = getInvalidLotto5Create();
+        Lotto5CreateDto invalidLotto5 = getInvalidLotto5Create();
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(lotto5Service.addLotto5Result(invalidLotto5)).thenReturn(true);
 
@@ -139,7 +137,7 @@ class Lotto5ControllerTest {
 
     @Test
     void testAddValidLotto5ResultForNonExistingEvent() throws Exception{
-        Lotto5Create validLotto5 = getValidLotto5Create();
+        Lotto5CreateDto validLotto5 = getValidLotto5Create();
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(lotto5Service.addLotto5Result(validLotto5)).thenReturn(false);
 
@@ -151,7 +149,7 @@ class Lotto5ControllerTest {
 
     @Test
     void modifyValidLotto5Result() throws Exception {
-        Lotto5Create validLotto5 = getValidLotto5Create();
+        Lotto5CreateDto validLotto5 = getValidLotto5Create();
         int id=1;
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(lotto5Service.updateLotto5Result(id,validLotto5)).thenReturn(true);
@@ -164,7 +162,7 @@ class Lotto5ControllerTest {
 
     @Test
     void modifyInvalidLotto5Result() throws Exception {
-        Lotto5Create validLotto5 = getInvalidLotto5Create();
+        Lotto5CreateDto validLotto5 = getInvalidLotto5Create();
         int id=1;
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(lotto5Service.updateLotto5Result(id,validLotto5)).thenReturn(true);
@@ -177,7 +175,7 @@ class Lotto5ControllerTest {
 
     @Test
     void modifyValidLotto5ResultForNonExistingEvent() throws Exception {
-        Lotto5Create validLotto5 = getValidLotto5Create();
+        Lotto5CreateDto validLotto5 = getValidLotto5Create();
         int id=33;
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(lotto5Service.updateLotto5Result(id,validLotto5)).thenReturn(false);

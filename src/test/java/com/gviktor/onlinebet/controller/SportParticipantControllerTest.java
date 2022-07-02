@@ -10,10 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.gviktor.onlinebet.dto.SportBidShow;
-import com.gviktor.onlinebet.dto.SportParticipantCreate;
-import com.gviktor.onlinebet.dto.SportParticipantShow;
-import com.gviktor.onlinebet.model.SportParticipant;
+import com.gviktor.onlinebet.dto.create.SportParticipantCreateDto;
+import com.gviktor.onlinebet.dto.show.SportParticipantShowDto;
 import com.gviktor.onlinebet.service.SportParticipantService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -29,8 +27,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @WebMvcTest(SportParticipantController.class)
 @ExtendWith(SpringExtension.class)
 class SportParticipantControllerTest {
@@ -42,37 +38,37 @@ class SportParticipantControllerTest {
     SportParticipantService sportParticipantService;
 
     private String url = "/sportParticipant";
-    private List<SportParticipantShow> getSportParticipants(){
-        List<SportParticipantShow> sportParticipantShows = new ArrayList<>();
-        SportParticipantShow sportParticipant1 = new SportParticipantShow();
+    private List<SportParticipantShowDto> getSportParticipants(){
+        List<SportParticipantShowDto> sportParticipantShowDtos = new ArrayList<>();
+        SportParticipantShowDto sportParticipant1 = new SportParticipantShowDto();
         sportParticipant1.setParticipant(TestDatas.getParticipants().get(0));
         sportParticipant1.setEvent(TestDatas.getEvents().get(0));
-        SportParticipantShow sportParticipant2 = new SportParticipantShow();
+        SportParticipantShowDto sportParticipant2 = new SportParticipantShowDto();
         sportParticipant2.setParticipant(TestDatas.getParticipants().get(1));
         sportParticipant2.setEvent(TestDatas.getEvents().get(1));
-        sportParticipantShows.add(sportParticipant1);
-        sportParticipantShows.add(sportParticipant2);
-        return sportParticipantShows;
+        sportParticipantShowDtos.add(sportParticipant1);
+        sportParticipantShowDtos.add(sportParticipant2);
+        return sportParticipantShowDtos;
     }
 
-    private SportParticipantCreate getValidSportParticipant(){
-        SportParticipantCreate sportParticipantCreate = new SportParticipantCreate();
-        sportParticipantCreate.setParticipantId(1);
-        sportParticipantCreate.setMultiplier(10);
-        sportParticipantCreate.setEventId(2);
-        return sportParticipantCreate;
+    private SportParticipantCreateDto getValidSportParticipant(){
+        SportParticipantCreateDto sportParticipantCreateDto = new SportParticipantCreateDto();
+        sportParticipantCreateDto.setParticipantId(1);
+        sportParticipantCreateDto.setMultiplier(10);
+        sportParticipantCreateDto.setEventId(2);
+        return sportParticipantCreateDto;
     }
-    private SportParticipantCreate getInvalidSportParticipant(){
-        SportParticipantCreate sportParticipantCreate = new SportParticipantCreate();
-        sportParticipantCreate.setParticipantId(1);
-        sportParticipantCreate.setMultiplier(-10);
-        sportParticipantCreate.setEventId(2);
-        return sportParticipantCreate;
+    private SportParticipantCreateDto getInvalidSportParticipant(){
+        SportParticipantCreateDto sportParticipantCreateDto = new SportParticipantCreateDto();
+        sportParticipantCreateDto.setParticipantId(1);
+        sportParticipantCreateDto.setMultiplier(-10);
+        sportParticipantCreateDto.setEventId(2);
+        return sportParticipantCreateDto;
     }
 
     @Test
     void getAllSportParticipants() throws Exception {
-        List<SportParticipantShow> sportParticipants = getSportParticipants();
+        List<SportParticipantShowDto> sportParticipants = getSportParticipants();
         Mockito.when(sportParticipantService.getAllSportParticipant()).thenReturn(sportParticipants);
         mockMvc.perform(get(url))
                 .andExpect(jsonPath("$", Matchers.hasSize(2)))
@@ -87,10 +83,10 @@ class SportParticipantControllerTest {
 
     @Test
     void getSportParticipant() throws Exception {
-        SportParticipantShow sportParticipantShow = getSportParticipants().get(1);
-        Mockito.when(sportParticipantService.getSportParticipantById(sportParticipantShow.getId())).thenReturn(sportParticipantShow);
+        SportParticipantShowDto sportParticipantShowDto = getSportParticipants().get(1);
+        Mockito.when(sportParticipantService.getSportParticipantById(sportParticipantShowDto.getId())).thenReturn(sportParticipantShowDto);
 
-        mockMvc.perform(get(url+"/"+sportParticipantShow.getId()))
+        mockMvc.perform(get(url+"/"+ sportParticipantShowDto.getId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.participant.sportType",Matchers.is("FORMULAONE".toUpperCase())))
                 .andExpect(jsonPath("$.event.startDate",Matchers.is("2000-10-04")));
@@ -98,7 +94,7 @@ class SportParticipantControllerTest {
     }
     @Test
     void addValidSportParticipant() throws Exception {
-        SportParticipantCreate validParticipant = getValidSportParticipant();
+        SportParticipantCreateDto validParticipant = getValidSportParticipant();
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         Mockito.when(sportParticipantService.addSportParticipant(validParticipant)).thenReturn(true);
@@ -109,7 +105,7 @@ class SportParticipantControllerTest {
     }
     @Test
     void addInvalidSportParticipant() throws Exception {
-        SportParticipantCreate invalidParticipant = getInvalidSportParticipant();
+        SportParticipantCreateDto invalidParticipant = getInvalidSportParticipant();
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 
@@ -122,7 +118,7 @@ class SportParticipantControllerTest {
 
     @Test
     void updateValidSportParticipant() throws Exception {
-        SportParticipantCreate validParticipant = getValidSportParticipant();
+        SportParticipantCreateDto validParticipant = getValidSportParticipant();
         int id=1;
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -136,7 +132,7 @@ class SportParticipantControllerTest {
 
     @Test
     void updateInvalidSportParticipant() throws Exception {
-        SportParticipantCreate invalidParticipant = getInvalidSportParticipant();
+        SportParticipantCreateDto invalidParticipant = getInvalidSportParticipant();
         int id=1;
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -148,7 +144,7 @@ class SportParticipantControllerTest {
     }
     @Test
     void updateNonExistingSportParticipantWithValidData() throws Exception {
-        SportParticipantCreate validParticipant = getValidSportParticipant();
+        SportParticipantCreateDto validParticipant = getValidSportParticipant();
         int id=1;
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);

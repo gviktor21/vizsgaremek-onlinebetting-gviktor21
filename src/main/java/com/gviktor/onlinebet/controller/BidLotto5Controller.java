@@ -1,7 +1,7 @@
 package com.gviktor.onlinebet.controller;
 
-import com.gviktor.onlinebet.dto.BidLotto5Create;
-import com.gviktor.onlinebet.dto.BidLotto5Show;
+import com.gviktor.onlinebet.dto.create.BidLotto5CreateDto;
+import com.gviktor.onlinebet.dto.show.BidLotto5ShowDto;
 import com.gviktor.onlinebet.service.BidLotto5Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,13 +26,13 @@ public class BidLotto5Controller {
         this.bidLotto5Service = bidLotto5Service;
     }
     @GetMapping
-    public ResponseEntity<List<BidLotto5Show>> getAllLotto5Beds(){
+    public ResponseEntity<List<BidLotto5ShowDto>> getAllLotto5Beds(){
         logger.info("http get request invoked to: '/bidlotto5'");
         return new ResponseEntity<>(bidLotto5Service.getAllLotto5Bids(), HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<Void> addLotto5Bid(@RequestBody @Valid BidLotto5Create bidLotto5Create, BindingResult bindingResult){
-        if(bindingResult.hasErrors() || !bidLotto5Service.addBid5Lotto(bidLotto5Create)){
+    public ResponseEntity<Void> addLotto5Bid(@RequestBody @Valid BidLotto5CreateDto bidLotto5CreateDto, BindingResult bindingResult){
+        if(bindingResult.hasErrors() || !bidLotto5Service.addBid5Lotto(bidLotto5CreateDto)){
             logger.info("http post request invoked to: '/bidlotto5' failed due to bad request data");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -41,13 +41,13 @@ public class BidLotto5Controller {
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<BidLotto5Show> getLotto5ById(@PathVariable int id){
+    public ResponseEntity<BidLotto5ShowDto> getLotto5ById(@PathVariable int id){
         logger.info("http get request invoked to: '/bidlotto5/{id}'");
         return new ResponseEntity<>(bidLotto5Service.getBidLotto5ById(id),HttpStatus.OK);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateLotto5Bid(@PathVariable int id,@RequestBody @Valid BidLotto5Create bidLotto5Create, BindingResult bindingResult){
-        if(bindingResult.hasErrors() || !bidLotto5Service.updateBid5Lotto(id,bidLotto5Create)){
+    public ResponseEntity<Void> updateLotto5Bid(@PathVariable int id, @RequestBody @Valid BidLotto5CreateDto bidLotto5CreateDto, BindingResult bindingResult){
+        if(bindingResult.hasErrors() || !bidLotto5Service.updateBid5Lotto(id, bidLotto5CreateDto)){
             logger.info("http put request invoked to: '/bidlotto5/{id}' failed due to bad request data");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

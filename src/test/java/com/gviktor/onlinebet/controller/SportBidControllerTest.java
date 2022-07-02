@@ -7,8 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gviktor.onlinebet.dto.SportBidCreate;
-import com.gviktor.onlinebet.dto.SportBidShow;
+import com.gviktor.onlinebet.dto.create.SportBidCreateDto;
+import com.gviktor.onlinebet.dto.show.SportBidShowDto;
 import com.gviktor.onlinebet.service.SportBidService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -24,8 +24,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @WebMvcTest(SportBidController.class)
 @ExtendWith(SpringExtension.class)
 class SportBidControllerTest {
@@ -37,37 +35,37 @@ class SportBidControllerTest {
     @MockBean
     SportBidService sportBidService;
 
-    private List<SportBidShow> getSportBids(){
-        List<SportBidShow> sportBids = new ArrayList<>();
-        SportBidShow sportBidShow1 = new SportBidShow();
-        sportBidShow1.setBid(TestDatas.getBids().get(0));
-        sportBidShow1.setParticipant(TestDatas.getParticipants().get(0));
+    private List<SportBidShowDto> getSportBids(){
+        List<SportBidShowDto> sportBids = new ArrayList<>();
+        SportBidShowDto sportBidShowDto1 = new SportBidShowDto();
+        sportBidShowDto1.setBid(TestDatas.getBids().get(0));
+        sportBidShowDto1.setParticipant(TestDatas.getParticipants().get(0));
 
-        SportBidShow sportBidShow2 = new SportBidShow();
-        sportBidShow2.setBid(TestDatas.getBids().get(1));
-        sportBidShow2.setParticipant(TestDatas.getParticipants().get(1));
+        SportBidShowDto sportBidShowDto2 = new SportBidShowDto();
+        sportBidShowDto2.setBid(TestDatas.getBids().get(1));
+        sportBidShowDto2.setParticipant(TestDatas.getParticipants().get(1));
 
-        sportBids.add(sportBidShow1);
-        sportBids.add(sportBidShow2);
+        sportBids.add(sportBidShowDto1);
+        sportBids.add(sportBidShowDto2);
         return sportBids;
     }
 
-    private SportBidCreate getValidSportBidCreate(){
-        SportBidCreate sportBidCreate = new SportBidCreate();
-        sportBidCreate.setBidId(1);
-        sportBidCreate.setParticipantId(2);
-        return  sportBidCreate;
+    private SportBidCreateDto getValidSportBidCreate(){
+        SportBidCreateDto sportBidCreateDto = new SportBidCreateDto();
+        sportBidCreateDto.setBidId(1);
+        sportBidCreateDto.setParticipantId(2);
+        return sportBidCreateDto;
     }
-    private SportBidCreate getInValidSportBidCreate(){
-        SportBidCreate sportBidCreate = new SportBidCreate();
-        sportBidCreate.setBidId(1);
-        return  sportBidCreate;
+    private SportBidCreateDto getInValidSportBidCreate(){
+        SportBidCreateDto sportBidCreateDto = new SportBidCreateDto();
+        sportBidCreateDto.setBidId(1);
+        return sportBidCreateDto;
     }
 
     @Test
     void getAllSportBid() throws Exception {
-        List<SportBidShow> sportBidShows = getSportBids();
-        Mockito.when(sportBidService.getSportBids()).thenReturn(sportBidShows);
+        List<SportBidShowDto> sportBidShowDtos = getSportBids();
+        Mockito.when(sportBidService.getSportBids()).thenReturn(sportBidShowDtos);
         mockMvc.perform(get(url))
                 .andExpect(jsonPath("$", Matchers.hasSize(2)))
                 .andExpect(jsonPath("$[0].bid.bidId",Matchers.is(1)))
@@ -83,7 +81,7 @@ class SportBidControllerTest {
 
     @Test
     void addValidSportBid() throws Exception {
-        SportBidCreate validSportBid = getValidSportBidCreate();
+        SportBidCreateDto validSportBid = getValidSportBidCreate();
         ObjectMapper objectMapper = new ObjectMapper();
 
         Mockito.when(sportBidService.addSportBid(validSportBid)).thenReturn(true);
@@ -96,7 +94,7 @@ class SportBidControllerTest {
     }
     @Test
     void addInvalidSportBid() throws Exception {
-        SportBidCreate invalidSportBid = getInValidSportBidCreate();
+        SportBidCreateDto invalidSportBid = getInValidSportBidCreate();
         ObjectMapper objectMapper = new ObjectMapper();
 
         Mockito.when(sportBidService.addSportBid(invalidSportBid)).thenReturn(true);
@@ -108,7 +106,7 @@ class SportBidControllerTest {
     }
     @Test
     void addNotExistingSportBidWithValidData() throws Exception {
-        SportBidCreate validSportBid = getValidSportBidCreate();
+        SportBidCreateDto validSportBid = getValidSportBidCreate();
         ObjectMapper objectMapper = new ObjectMapper();
 
         Mockito.when(sportBidService.addSportBid(validSportBid)).thenReturn(false);
@@ -122,9 +120,9 @@ class SportBidControllerTest {
 
     @Test
     void getSportBid() throws Exception {
-        SportBidShow sportBidShow = getSportBids().get(0);
+        SportBidShowDto sportBidShowDto = getSportBids().get(0);
         int id=10;
-        Mockito.when(sportBidService.getSportBidById(id)).thenReturn(sportBidShow);
+        Mockito.when(sportBidService.getSportBidById(id)).thenReturn(sportBidShowDto);
         mockMvc.perform(get(url+"/"+id))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.bid.bidId",Matchers.is(1)))
@@ -134,7 +132,7 @@ class SportBidControllerTest {
 
     @Test
     void updateValidSportBid() throws Exception {
-        SportBidCreate validSportBid = getValidSportBidCreate();
+        SportBidCreateDto validSportBid = getValidSportBidCreate();
         ObjectMapper objectMapper = new ObjectMapper();
         int id = 1;
 
@@ -147,7 +145,7 @@ class SportBidControllerTest {
     }
     @Test
     void updateInvalidSportBid() throws Exception {
-        SportBidCreate invalidSportBid = getInValidSportBidCreate();
+        SportBidCreateDto invalidSportBid = getInValidSportBidCreate();
         ObjectMapper objectMapper = new ObjectMapper();
         int id = 100;
 
@@ -161,7 +159,7 @@ class SportBidControllerTest {
 
     @Test
     void updateNotExistingSportBidWithValidData() throws Exception {
-        SportBidCreate validSportBid = getValidSportBidCreate();
+        SportBidCreateDto validSportBid = getValidSportBidCreate();
         ObjectMapper objectMapper = new ObjectMapper();
         int id = 100;
 

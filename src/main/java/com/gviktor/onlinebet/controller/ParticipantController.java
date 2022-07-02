@@ -1,7 +1,7 @@
 package com.gviktor.onlinebet.controller;
 
-import com.gviktor.onlinebet.dto.ParticipantCreate;
-import com.gviktor.onlinebet.dto.ParticipantShow;
+import com.gviktor.onlinebet.dto.create.ParticipantCreateDto;
+import com.gviktor.onlinebet.dto.show.ParticipantShowDto;
 import com.gviktor.onlinebet.service.ParticipantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,28 +26,28 @@ public class ParticipantController {
     private Logger logger = LoggerFactory.getLogger(ParticipantController.class);
 
     @GetMapping
-    public ResponseEntity<List<ParticipantShow>> getAllParticipant(){
+    public ResponseEntity<List<ParticipantShowDto>> getAllParticipant(){
         logger.info("http get request invoked to: '/participant'");
         return new ResponseEntity<>(service.getAllParticipant(), HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<Void> addParticipant(@RequestBody @Valid ParticipantCreate participantCreate, BindingResult bindingResult){
+    public ResponseEntity<Void> addParticipant(@RequestBody @Valid ParticipantCreateDto participantCreateDto, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             logger.info("http post request invoked to: '/participant' failed due to invalid request data");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        service.addParticipant(participantCreate);
+        service.addParticipant(participantCreateDto);
         logger.info("http post request invoked to: '/participant' participant added");
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<ParticipantShow> getParticipant(@PathVariable int id){
+    public ResponseEntity<ParticipantShowDto> getParticipant(@PathVariable int id){
         logger.info("http get request invoked to: '/participant/{id}'");
         return new ResponseEntity<>(service.getParticipantById(id),HttpStatus.OK);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Void> modifyParticipant(@PathVariable int id,@RequestBody @Valid ParticipantCreate participantCreate, BindingResult bindingResult){
-        if (bindingResult.hasErrors() || !service.updateParticipant(id,participantCreate)){
+    public ResponseEntity<Void> modifyParticipant(@PathVariable int id, @RequestBody @Valid ParticipantCreateDto participantCreateDto, BindingResult bindingResult){
+        if (bindingResult.hasErrors() || !service.updateParticipant(id, participantCreateDto)){
             logger.info("http put request invoked to: '/participant/{id}' failed due to invalid request data");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

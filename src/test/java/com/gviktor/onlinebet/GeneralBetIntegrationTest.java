@@ -1,8 +1,11 @@
 package com.gviktor.onlinebet;
 
 import com.gviktor.onlinebet.controller.TestDatas;
-import com.gviktor.onlinebet.dto.*;
-import org.aspectj.lang.annotation.Before;
+import com.gviktor.onlinebet.dto.create.BidAppUserCreateDto;
+import com.gviktor.onlinebet.dto.create.BidCreateDto;
+import com.gviktor.onlinebet.dto.create.EventCreateDto;
+import com.gviktor.onlinebet.dto.show.BidAppUserShowDto;
+import com.gviktor.onlinebet.dto.show.BidShowDto;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,60 +31,60 @@ public class GeneralBetIntegrationTest {
 
 
     private void postATestEvent(){
-        EventCreate eventCreate = TestDatas.getValidEventToPost();
-        postEvent(eventCreate,urlEvent);
+        EventCreateDto eventCreateDto = TestDatas.getValidEventToPost();
+        postEvent(eventCreateDto,urlEvent);
     }
     private void postPastEvent() {
-        EventCreate eventCreate = TestDatas.getValidEventToPost();
-        eventCreate.setStartDate(LocalDate.now().minusDays(10));
-        postEvent(eventCreate,urlEvent);
+        EventCreateDto eventCreateDto = TestDatas.getValidEventToPost();
+        eventCreateDto.setStartDate(LocalDate.now().minusDays(10));
+        postEvent(eventCreateDto,urlEvent);
 
     }
     private void postUserWithMoney(){
-        BidAppUserCreate bidAppUserCreate =TestDatas.getUsersToPost().get(0);
-        bidAppUserCreate.setBalance(1000);
-        postBidUsers(bidAppUserCreate,urlUser);
+        BidAppUserCreateDto bidAppUserCreateDto =TestDatas.getUsersToPost().get(0);
+        bidAppUserCreateDto.setBalance(1000);
+        postBidUsers(bidAppUserCreateDto,urlUser);
     }
 
-    private List<BidCreate> getPostedBids(){
-        List<BidCreate> bidsToPost= new ArrayList<>();
-        BidCreate bidCreate1 = TestDatas.getValidBid();
+    private List<BidCreateDto> getPostedBids(){
+        List<BidCreateDto> bidsToPost= new ArrayList<>();
+        BidCreateDto bidCreateDto1 = TestDatas.getValidBid();
 
-        BidCreate bidCreate2 = new BidCreate();
-        bidCreate2.setBidAmount(50);
-        bidCreate2.setBidType(bidCreate1.getBidType());
-        bidCreate2.setEventId(bidCreate1.getEventId());
-        bidCreate2.setDate(bidCreate1.getDate().minusDays(2));
-        bidCreate2.setPrize(200);
-        bidCreate2.setUsername(bidCreate1.getUsername());
+        BidCreateDto bidCreateDto2 = new BidCreateDto();
+        bidCreateDto2.setBidAmount(50);
+        bidCreateDto2.setBidType(bidCreateDto1.getBidType());
+        bidCreateDto2.setEventId(bidCreateDto1.getEventId());
+        bidCreateDto2.setDate(bidCreateDto1.getDate().minusDays(2));
+        bidCreateDto2.setPrize(200);
+        bidCreateDto2.setUsername(bidCreateDto1.getUsername());
 
-        bidsToPost.add(bidCreate1);
-        bidsToPost.add(bidCreate2);
+        bidsToPost.add(bidCreateDto1);
+        bidsToPost.add(bidCreateDto2);
         return bidsToPost;
     }
-    private  BidCreate getUpdatedBidData(){
-        BidCreate bidCreate = getPostedBids().get(0);
-        bidCreate.setBidAmount(99);
-        bidCreate.setPrize(990);
-        bidCreate.setBidType("Updated");
-        return bidCreate;
+    private BidCreateDto getUpdatedBidData(){
+        BidCreateDto bidCreateDto = getPostedBids().get(0);
+        bidCreateDto.setBidAmount(99);
+        bidCreateDto.setPrize(990);
+        bidCreateDto.setBidType("Updated");
+        return bidCreateDto;
     }
-    private List<BidShow> getExpectedBids(){
-        List<BidShow> expectedBids= new ArrayList<>();
+    private List<BidShowDto> getExpectedBids(){
+        List<BidShowDto> expectedBids= new ArrayList<>();
 
-        BidAppUserShow bidAppUserShow = TestDatas.getUsers().get(0);
-        bidAppUserShow.setBalance(850);
+        BidAppUserShowDto bidAppUserShowDto = TestDatas.getUsers().get(0);
+        bidAppUserShowDto.setBalance(850);
 
-        BidShow bid1 = new BidShow();
+        BidShowDto bid1 = new BidShowDto();
         bid1.setBidId(1);
-        bid1.setUser(bidAppUserShow);
+        bid1.setUser(bidAppUserShowDto);
         bid1.setBidEvent(TestDatas.getValidEventToPostShowAsFirstEvent());
         bid1.setBidAmount(getPostedBids().get(0).getBidAmount());
         bid1.setBidType(getPostedBids().get(0).getBidType());
         bid1.setDate(getPostedBids().get(0).getDate());
         bid1.setPrize(getPostedBids().get(0).getPrize());
 
-        BidShow bid2 = new BidShow();
+        BidShowDto bid2 = new BidShowDto();
         bid2.setBidId(2);
         bid2.setBidAmount(50);
         bid2.setBidType(bid1.getBidType());
@@ -101,12 +104,12 @@ public class GeneralBetIntegrationTest {
     public void getAllBid(){
         postATestEvent();
         postUserWithMoney();
-        List<BidCreate> postedBids = getPostedBids();
-        for (BidCreate postedBid : postedBids) {
+        List<BidCreateDto> postedBids = getPostedBids();
+        for (BidCreateDto postedBid : postedBids) {
             postBid(postedBid,url);
         }
 
-        ResponseEntity<BidShow[]> responseEntity = testRestTemplate.getForEntity(url,BidShow[].class);
+        ResponseEntity<BidShowDto[]> responseEntity = testRestTemplate.getForEntity(url, BidShowDto[].class);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         hasTheSameElements(responseEntity.getBody());
     }
@@ -115,16 +118,16 @@ public class GeneralBetIntegrationTest {
     @Order(2)
     public void getBidById(){
         String getUrl =url+"/"+getExpectedBids().get(1).getBidId();
-        ResponseEntity<BidShow> responseEntity = testRestTemplate.getForEntity(getUrl,BidShow.class);
+        ResponseEntity<BidShowDto> responseEntity = testRestTemplate.getForEntity(getUrl, BidShowDto.class);
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         assertEquals(getExpectedBids().get(1),responseEntity.getBody());
     }
     @Test
     @Order(3)
     public void addBidIfUserHaveInSufficientMoneyThenReturnBadRequest(){
-        BidCreate expensiveBid = getPostedBids().get(0);
+        BidCreateDto expensiveBid = getPostedBids().get(0);
         expensiveBid.setBidAmount(TestDatas.getUsers().get(0).getBalance() +100000);
-        HttpEntity<BidCreate> httpEntity = createHttpEntity(expensiveBid);
+        HttpEntity<BidCreateDto> httpEntity = createHttpEntity(expensiveBid);
         ResponseEntity<Void> responseEntity= testRestTemplate.exchange(url,HttpMethod.POST,httpEntity,Void.class);
         assertEquals(HttpStatus.BAD_REQUEST,responseEntity.getStatusCode());
     }
@@ -133,9 +136,9 @@ public class GeneralBetIntegrationTest {
     @Order(4)
     public void addBidForPastEventReturnsBadRequest(){
         postPastEvent();
-        BidCreate bidToNewEvent = getPostedBids().get(0);
+        BidCreateDto bidToNewEvent = getPostedBids().get(0);
         bidToNewEvent.setEventId(2);
-        HttpEntity<BidCreate> httpEntity = createHttpEntity(bidToNewEvent);
+        HttpEntity<BidCreateDto> httpEntity = createHttpEntity(bidToNewEvent);
         ResponseEntity<Void> responseEntity= testRestTemplate.exchange(url,HttpMethod.POST,httpEntity,Void.class);
         assertEquals(HttpStatus.BAD_REQUEST,responseEntity.getStatusCode());
     }
@@ -144,15 +147,15 @@ public class GeneralBetIntegrationTest {
     @Test
     @Order(5)
     public void testUpdateBid(){
-        BidCreate updatedBidData = getUpdatedBidData();
+        BidCreateDto updatedBidData = getUpdatedBidData();
         String putUrl =url+"/"+getExpectedBids().get(0).getBidId();
 
-        HttpEntity<BidCreate> httpEntity = createHttpEntity(updatedBidData);
+        HttpEntity<BidCreateDto> httpEntity = createHttpEntity(updatedBidData);
         ResponseEntity<Void> responseEntity= testRestTemplate.exchange(putUrl,HttpMethod.PUT,httpEntity,Void.class);
         assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
 
-        ResponseEntity<BidShow> responseEntityResult= testRestTemplate.getForEntity(putUrl,BidShow.class);
-        BidShow actual = responseEntityResult.getBody();
+        ResponseEntity<BidShowDto> responseEntityResult= testRestTemplate.getForEntity(putUrl, BidShowDto.class);
+        BidShowDto actual = responseEntityResult.getBody();
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
         assertEquals(updatedBidData.getBidType(),actual.getBidType());
         assertEquals(updatedBidData.getBidAmount(),actual.getBidAmount());
@@ -165,50 +168,50 @@ public class GeneralBetIntegrationTest {
     @Test
     @Order(6)
     public void testDeleteBidById(){
-        ResponseEntity<BidShow[]> responseEntity = testRestTemplate.getForEntity(url,BidShow[].class);
+        ResponseEntity<BidShowDto[]> responseEntity = testRestTemplate.getForEntity(url, BidShowDto[].class);
         int expectedSize=responseEntity.getBody().length;
 
         testRestTemplate.delete(url+"/"+getExpectedBids().get(0).getBidId());
-        responseEntity = testRestTemplate.getForEntity(url,BidShow[].class);
+        responseEntity = testRestTemplate.getForEntity(url, BidShowDto[].class);
         assertEquals(--expectedSize,responseEntity.getBody().length);
 
         testRestTemplate.delete(url+"/"+getExpectedBids().get(1).getBidId());
-        responseEntity = testRestTemplate.getForEntity(url,BidShow[].class);
+        responseEntity = testRestTemplate.getForEntity(url, BidShowDto[].class);
         assertEquals(--expectedSize,responseEntity.getBody().length);
     }
 
-    private void postBid(BidCreate bid, String url){
-        HttpEntity<BidCreate> httpEntity = createHttpEntity(bid);
+    private void postBid(BidCreateDto bid, String url){
+        HttpEntity<BidCreateDto> httpEntity = createHttpEntity(bid);
         testRestTemplate.postForEntity(url,httpEntity,String.class).getStatusCode();
     }
-    private void postEvent(EventCreate eventCreate, String url){
-        HttpEntity<EventCreate> httpEntity = createHttpEntity(eventCreate);
+    private void postEvent(EventCreateDto eventCreateDto, String url){
+        HttpEntity<EventCreateDto> httpEntity = createHttpEntity(eventCreateDto);
         testRestTemplate.postForEntity(url,httpEntity,String.class).getStatusCode();
     }
-    private HttpEntity<EventCreate> createHttpEntity(EventCreate event){
+    private HttpEntity<EventCreateDto> createHttpEntity(EventCreateDto event){
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         return new HttpEntity<>(event,httpHeaders);
     }
 
-    private HttpEntity<BidCreate> createHttpEntity(BidCreate bid){
+    private HttpEntity<BidCreateDto> createHttpEntity(BidCreateDto bid){
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         return new HttpEntity<>(bid,httpHeaders);
     }
-    private void postBidUsers(BidAppUserCreate bidAppUserCreate,String url){
-        HttpEntity<BidAppUserCreate> httpEntity = createHttpEntity(bidAppUserCreate);
+    private void postBidUsers(BidAppUserCreateDto bidAppUserCreate, String url){
+        HttpEntity<BidAppUserCreateDto> httpEntity = createHttpEntity(bidAppUserCreate);
         testRestTemplate.postForEntity(url,httpEntity,String.class).getStatusCode();
     }
 
-    private HttpEntity<BidAppUserCreate> createHttpEntity(BidAppUserCreate bidAppUserCreate){
+    private HttpEntity<BidAppUserCreateDto> createHttpEntity(BidAppUserCreateDto bidAppUserCreate){
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON);
         return new HttpEntity<>(bidAppUserCreate,httpHeaders);
     }
-    private void hasTheSameElements(BidShow[] expectedBid){
-        List<BidShow> listExpected = getExpectedBids();
-        List<BidShow> listActual = Arrays.asList(expectedBid);
+    private void hasTheSameElements(BidShowDto[] expectedBid){
+        List<BidShowDto> listExpected = getExpectedBids();
+        List<BidShowDto> listActual = Arrays.asList(expectedBid);
         assertTrue(listActual.size()== listExpected.size() && listExpected.containsAll(listActual) && listActual.containsAll(listExpected));
     }
 }

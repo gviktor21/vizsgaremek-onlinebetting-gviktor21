@@ -1,4 +1,4 @@
-package com.gviktor.onlinebet.dto;
+package com.gviktor.onlinebet.dto.create;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-public class Lotto5Create {
+public class Lotto5CreateDto {
 
     @NotNull
     private Integer eventId;

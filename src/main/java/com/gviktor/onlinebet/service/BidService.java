@@ -1,7 +1,7 @@
 package com.gviktor.onlinebet.service;
 
-import com.gviktor.onlinebet.dto.BidCreate;
-import com.gviktor.onlinebet.dto.BidShow;
+import com.gviktor.onlinebet.dto.create.BidCreateDto;
+import com.gviktor.onlinebet.dto.show.BidShowDto;
 import com.gviktor.onlinebet.model.Bid;
 import com.gviktor.onlinebet.model.BidAppUser;
 import com.gviktor.onlinebet.model.Event;
@@ -10,11 +10,9 @@ import com.gviktor.onlinebet.repository.EventRepository;
 import com.gviktor.onlinebet.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,58 +34,58 @@ public class BidService {
         this.mapper = modelMapper;
     }
 
-    private List<BidShow> convertList(List<Bid> bids) {
-        return bids.stream().map(a -> mapper.map(a, BidShow.class)).collect(Collectors.toList());
+    private List<BidShowDto> convertList(List<Bid> bids) {
+        return bids.stream().map(a -> mapper.map(a, BidShowDto.class)).collect(Collectors.toList());
     }
 
-    public List<BidShow> getAllBids() {
+    public List<BidShowDto> getAllBids() {
         return convertList(bidRepository.findAll());
     }
 
-    public BidShow getBidById(int id) {
-        return mapper.map(bidRepository.findById(id).orElseThrow(), BidShow.class);
+    public BidShowDto getBidById(int id) {
+        return mapper.map(bidRepository.findById(id).orElseThrow(), BidShowDto.class);
     }
 
     public void deleteBidById(int id) {
         bidRepository.deleteById(id);
     }
 
-    public boolean addBid(BidCreate bidCreate) {
-        if (validateNewBid(bidCreate)){
+    public boolean addBid(BidCreateDto bidCreateDto) {
+        if (validateNewBid(bidCreateDto)){
             mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-            Bid bid = mapper.map(bidCreate,Bid.class);
-            bid.setUser(userRepository.findById(bidCreate.getUsername()).get());
-            bid.setBidEvent(eventRepository.findById(bidCreate.getEventId()).get());
+            Bid bid = mapper.map(bidCreateDto,Bid.class);
+            bid.setUser(userRepository.findById(bidCreateDto.getUsername()).get());
+            bid.setBidEvent(eventRepository.findById(bidCreateDto.getEventId()).get());
             mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
             bidRepository.saveAndFlush(bid);
-            updateUser(userRepository.findById(bidCreate.getUsername()).get(),bid);
+            updateUser(userRepository.findById(bidCreateDto.getUsername()).get(),bid);
             return true;
         }
         return false;
     }
 
-    private boolean validateNewBid(BidCreate bidCreate) {
-        Optional<BidAppUser> bidAppUser = userRepository.findById(bidCreate.getUsername());
-        Optional<Event> event = eventRepository.findById(bidCreate.getEventId());
+    private boolean validateNewBid(BidCreateDto bidCreateDto) {
+        Optional<BidAppUser> bidAppUser = userRepository.findById(bidCreateDto.getUsername());
+        Optional<Event> event = eventRepository.findById(bidCreateDto.getEventId());
 
-        return bidAppUser.isPresent() && event.isPresent()&&isNotPastEvent(event.get(),bidCreate)  && haveUserEnoughMoney(bidCreate,bidAppUser.get());
+        return bidAppUser.isPresent() && event.isPresent()&&isNotPastEvent(event.get(), bidCreateDto)  && haveUserEnoughMoney(bidCreateDto,bidAppUser.get());
     }
-    private boolean haveUserEnoughMoney(BidCreate bidCreate,BidAppUser bidAppUser){
-        return bidAppUser.getBalance()-bidCreate.getBidAmount()>=0;
+    private boolean haveUserEnoughMoney(BidCreateDto bidCreateDto, BidAppUser bidAppUser){
+        return bidAppUser.getBalance()- bidCreateDto.getBidAmount()>=0;
     }
-    private boolean isNotPastEvent(Event event, BidCreate bidCreate){
-        System.out.println("PASTEVENT: "+bidCreate.getDate().isBefore(event.getStartDate()));
-        return bidCreate.getDate().isBefore(event.getStartDate());
+    private boolean isNotPastEvent(Event event, BidCreateDto bidCreateDto){
+        System.out.println("PASTEVENT: "+ bidCreateDto.getDate().isBefore(event.getStartDate()));
+        return bidCreateDto.getDate().isBefore(event.getStartDate());
     }
-    public boolean updateBid(int id, BidCreate bidCreate) {
-        if (!bidRepository.findById(id).isPresent() || !validateNewBid(bidCreate)) {
+    public boolean updateBid(int id, BidCreateDto bidCreateDto) {
+        if (!bidRepository.findById(id).isPresent() || !validateNewBid(bidCreateDto)) {
             return false;
         }
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        Bid bid = mapper.map(bidCreate,Bid.class);
+        Bid bid = mapper.map(bidCreateDto,Bid.class);
         bid.setBidId(id);
-        bid.setUser(userRepository.findById(bidCreate.getUsername()).get());
-        bid.setBidEvent(eventRepository.findById(bidCreate.getEventId()).get());
+        bid.setUser(userRepository.findById(bidCreateDto.getUsername()).get());
+        bid.setBidEvent(eventRepository.findById(bidCreateDto.getEventId()).get());
         mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
         bidRepository.save(bid);
         return true;

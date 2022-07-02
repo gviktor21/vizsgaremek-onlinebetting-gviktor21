@@ -6,13 +6,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.gviktor.onlinebet.dto.BidAppUserCreate;
-import com.gviktor.onlinebet.dto.EventCreate;
-import com.gviktor.onlinebet.dto.EventShow;
+import com.gviktor.onlinebet.dto.create.EventCreateDto;
+import com.gviktor.onlinebet.dto.show.EventShowDto;
 import com.gviktor.onlinebet.model.EventType;
 import com.gviktor.onlinebet.service.EventService;
 import org.hamcrest.Matchers;
@@ -30,7 +28,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 @WebMvcTest(EventController.class)
 @ExtendWith(SpringExtension.class)
 class EventControllerUnitTest {
@@ -43,7 +40,7 @@ class EventControllerUnitTest {
 
     @Test
     void getAllEvents() throws Exception {
-        List<EventShow> eventsExpected = getEvents();
+        List<EventShowDto> eventsExpected = getEvents();
         Mockito.when(eventService.getAllEvents()).thenReturn(eventsExpected);
 
         mockMvc.perform(get("/event"))
@@ -56,47 +53,47 @@ class EventControllerUnitTest {
                 .andExpect(jsonPath("$[2].startDate",Matchers.is("2030-01-01")));
     }
 
-    private List<EventShow> getEvents(){
-        List<EventShow> events = new ArrayList<>();
-        EventShow eventShow1 = new EventShow();
-        eventShow1.setEventId(1);
-        eventShow1.setEventType(EventType.SPORT);
-        eventShow1.setStartDate(LocalDate.of(1111,11,11));
-        EventShow eventShow2 = new EventShow();
-        eventShow2.setEventId(2);
-        eventShow2.setEventType(EventType.SPORT);
-        eventShow2.setStartDate(LocalDate.of(2000,10,4));
-        EventShow eventShow3 = new EventShow();
-        eventShow3.setEventId(3);
-        eventShow3.setEventType(EventType.LOTTO5);
-        eventShow3.setStartDate(LocalDate.of(2030,1,1));
-        events.add(eventShow1);
-        events.add(eventShow2);
-        events.add(eventShow3);
+    private List<EventShowDto> getEvents(){
+        List<EventShowDto> events = new ArrayList<>();
+        EventShowDto eventShowDto1 = new EventShowDto();
+        eventShowDto1.setEventId(1);
+        eventShowDto1.setEventType(EventType.SPORT);
+        eventShowDto1.setStartDate(LocalDate.of(1111,11,11));
+        EventShowDto eventShowDto2 = new EventShowDto();
+        eventShowDto2.setEventId(2);
+        eventShowDto2.setEventType(EventType.SPORT);
+        eventShowDto2.setStartDate(LocalDate.of(2000,10,4));
+        EventShowDto eventShowDto3 = new EventShowDto();
+        eventShowDto3.setEventId(3);
+        eventShowDto3.setEventType(EventType.LOTTO5);
+        eventShowDto3.setStartDate(LocalDate.of(2030,1,1));
+        events.add(eventShowDto1);
+        events.add(eventShowDto2);
+        events.add(eventShowDto3);
         return events;
     }
-    private EventCreate getValidEvent(){
-        EventCreate eventCreate = new EventCreate();
-        eventCreate.setEventType(EventType.LOTTO5);
-        eventCreate.setDescription("Draw numbers of Lotto 5");
-        eventCreate.setStartDate(LocalDate.now());
-        eventCreate.setEndDate(LocalDate.now().plusDays(2));
-        return eventCreate;
+    private EventCreateDto getValidEvent(){
+        EventCreateDto eventCreateDto = new EventCreateDto();
+        eventCreateDto.setEventType(EventType.LOTTO5);
+        eventCreateDto.setDescription("Draw numbers of Lotto 5");
+        eventCreateDto.setStartDate(LocalDate.now());
+        eventCreateDto.setEndDate(LocalDate.now().plusDays(2));
+        return eventCreateDto;
     }
-    private EventCreate getInvalidEvent(){
-        EventCreate eventCreate = new EventCreate();
-        eventCreate.setEventType(EventType.LOTTO5);
-        eventCreate.setDescription("Lotto".repeat(256));
-        eventCreate.setStartDate(LocalDate.now());
-        eventCreate.setEndDate(LocalDate.now().plusDays(2));
-        return eventCreate;
+    private EventCreateDto getInvalidEvent(){
+        EventCreateDto eventCreateDto = new EventCreateDto();
+        eventCreateDto.setEventType(EventType.LOTTO5);
+        eventCreateDto.setDescription("Lotto".repeat(256));
+        eventCreateDto.setStartDate(LocalDate.now());
+        eventCreateDto.setEndDate(LocalDate.now().plusDays(2));
+        return eventCreateDto;
     }
 
     @Test
     void testGetEventById() throws Exception {
-        EventShow eventShow = getEvents().get(0);
-        Mockito.when(eventService.getEventById(eventShow.getEventId())).thenReturn(eventShow);
-        mockMvc.perform(get("/event/"+eventShow.getEventId()))
+        EventShowDto eventShowDto = getEvents().get(0);
+        Mockito.when(eventService.getEventById(eventShowDto.getEventId())).thenReturn(eventShowDto);
+        mockMvc.perform(get("/event/"+ eventShowDto.getEventId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.eventId",Matchers.is(1)))
                 .andExpect(jsonPath("$.eventType",Matchers.is("SPORT")))
@@ -105,7 +102,7 @@ class EventControllerUnitTest {
 
     @Test
     void testUpdateValidEvent() throws Exception {
-        EventCreate newEvent = getValidEvent();
+        EventCreateDto newEvent = getValidEvent();
         int id=1;
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -118,7 +115,7 @@ class EventControllerUnitTest {
     }
     @Test
     void testUpdateInvalidEvent() throws Exception {
-        EventCreate newEvent = getInvalidEvent();
+        EventCreateDto newEvent = getInvalidEvent();
         int id=1;
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -132,7 +129,7 @@ class EventControllerUnitTest {
     }
     @Test
     void testUpdateNonExistingElementWithValidData() throws Exception{
-        EventCreate newEvent = getValidEvent();
+        EventCreateDto newEvent = getValidEvent();
         int id=1;
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -154,7 +151,7 @@ class EventControllerUnitTest {
 
     @Test
     void testAddValidEvent() throws Exception{
-        EventCreate newEvent = getValidEvent();
+        EventCreateDto newEvent = getValidEvent();
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mockMvc.perform(post("/event")
@@ -165,7 +162,7 @@ class EventControllerUnitTest {
     }
     @Test
     void testAddInvalidEvent() throws Exception {
-        EventCreate newEvent = getInvalidEvent();
+        EventCreateDto newEvent = getInvalidEvent();
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mockMvc.perform(post("/event")

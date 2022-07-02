@@ -1,7 +1,7 @@
 package com.gviktor.onlinebet.controller;
 
-import com.gviktor.onlinebet.dto.SportEventCreate;
-import com.gviktor.onlinebet.dto.SportEventShow;
+import com.gviktor.onlinebet.dto.create.SportEventCreateDto;
+import com.gviktor.onlinebet.dto.show.SportEventShowDto;
 import com.gviktor.onlinebet.service.SportEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,13 +25,13 @@ public class SportEventController {
     }
 
     @GetMapping
-    public ResponseEntity<List<SportEventShow>> getAllSportEvents(){
+    public ResponseEntity<List<SportEventShowDto>> getAllSportEvents(){
         logger.info("http get request invoked to: '/sportevent'");
         return new ResponseEntity<>(service.getAllSportEvent(), HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<Void> addSportEventToEventIdentifiedByItsId( @RequestBody @Valid SportEventCreate sportEventCreate, BindingResult bindingResult){
-        if (bindingResult.hasErrors() || ! service.addSportEvent(sportEventCreate)){
+    public ResponseEntity<Void> addSportEventToEventIdentifiedByItsId(@RequestBody @Valid SportEventCreateDto sportEventCreateDto, BindingResult bindingResult){
+        if (bindingResult.hasErrors() || ! service.addSportEvent(sportEventCreateDto)){
             logger.info("http post request invoked to: '/sportevent' failed due to bad request");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -39,13 +39,13 @@ public class SportEventController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<SportEventShow> getSportEvent(@PathVariable int id){
+    public ResponseEntity<SportEventShowDto> getSportEvent(@PathVariable int id){
         logger.info("http get request invoked to: '/sportevent/{id}'");
         return new ResponseEntity<>(service.getSportEventById(id),HttpStatus.OK);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateSportEvent(@PathVariable int id, @RequestBody @Valid SportEventCreate sportEventCreate,BindingResult bindingResult){
-        if (bindingResult.hasErrors() || !service.updateSportEvent(id,sportEventCreate)){
+    public ResponseEntity<Void> updateSportEvent(@PathVariable int id, @RequestBody @Valid SportEventCreateDto sportEventCreateDto, BindingResult bindingResult){
+        if (bindingResult.hasErrors() || !service.updateSportEvent(id, sportEventCreateDto)){
             logger.info("http put request invoked to: '/sportevent/{id}' failed due to bad request");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

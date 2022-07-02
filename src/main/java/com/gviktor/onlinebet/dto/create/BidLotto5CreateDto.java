@@ -1,4 +1,4 @@
-package com.gviktor.onlinebet.dto;
+package com.gviktor.onlinebet.dto.create;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 
 @Data
 @NoArgsConstructor
-public class BidLotto5Create {
+public class BidLotto5CreateDto {
     private int bidId;
     @Min(value=1)
     @Max(value=90)

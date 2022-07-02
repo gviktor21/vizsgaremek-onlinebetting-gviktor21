@@ -1,7 +1,7 @@
 package com.gviktor.onlinebet.controller;
 
-import com.gviktor.onlinebet.dto.EventCreate;
-import com.gviktor.onlinebet.dto.EventShow;
+import com.gviktor.onlinebet.dto.create.EventCreateDto;
+import com.gviktor.onlinebet.dto.show.EventShowDto;
 import com.gviktor.onlinebet.service.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,18 +26,18 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EventShow>> getAllEvents(){
+    public ResponseEntity<List<EventShowDto>> getAllEvents(){
         logger.info("http get request invoked to: '/event'");
         return new ResponseEntity<>(service.getAllEvents(), HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<EventShow> getEvent(@PathVariable int id) {
+    public ResponseEntity<EventShowDto> getEvent(@PathVariable int id) {
         logger.info("http get request invoked to: '/event/{id}'");
         return new ResponseEntity<>(service.getEventById(id),HttpStatus.OK);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Void> updateEvent(@PathVariable int id, @RequestBody  @Valid EventCreate eventCreate, BindingResult bindingResult){
-        if (bindingResult.hasErrors() || !service.updateEvent(id,eventCreate)){
+    public ResponseEntity<Void> updateEvent(@PathVariable int id, @RequestBody  @Valid EventCreateDto eventCreateDto, BindingResult bindingResult){
+        if (bindingResult.hasErrors() || !service.updateEvent(id, eventCreateDto)){
             logger.info("http put request invoked to: '/event/{id}' failed due to bad request data");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST) ;
         }
@@ -51,13 +51,13 @@ public class EventController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<Void> addEvent(@RequestBody @Valid EventCreate eventCreate,BindingResult bindingResult){
+    public ResponseEntity<Void> addEvent(@RequestBody @Valid EventCreateDto eventCreateDto, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             logger.info("http post request invoked to: '/event' failed due to invalid event data");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         logger.info("http post request invoked to: '/event' event added.");
-        service.addEvent(eventCreate);
+        service.addEvent(eventCreateDto);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

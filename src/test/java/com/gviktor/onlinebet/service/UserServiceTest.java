@@ -1,8 +1,8 @@
 package com.gviktor.onlinebet.service;
 
 import com.gviktor.onlinebet.controller.TestDatas;
-import com.gviktor.onlinebet.dto.BidAppUserCreate;
-import com.gviktor.onlinebet.dto.BidAppUserShow;
+import com.gviktor.onlinebet.dto.create.BidAppUserCreateDto;
+import com.gviktor.onlinebet.dto.show.BidAppUserShowDto;
 import com.gviktor.onlinebet.model.BidAppUser;
 import com.gviktor.onlinebet.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -12,7 +12,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,27 +32,27 @@ class UserServiceTest {
     @Test
     void getAllUser() {
         Mockito.when(userRepository.findAll()).thenReturn(TestDatas.getUsersEntity());
-        List<BidAppUserShow> list = userService.getAllUser();
+        List<BidAppUserShowDto> list = userService.getAllUser();
         assertEquals(2,list.size());
         Mockito.verify(userRepository,Mockito.times(1)).findAll();
     }
 
     @Test
     void getUserByUsername() {
-        BidAppUserShow bidAppUserShow = TestDatas.getUsers().get(0);
-        String username = bidAppUserShow.getUsername();
+        BidAppUserShowDto bidAppUserShowDto = TestDatas.getUsers().get(0);
+        String username = bidAppUserShowDto.getUsername();
         Optional<BidAppUser> unMappedUser= Optional.of(TestDatas.getUsersEntity().get(0));
         Mockito.when(userRepository.findById(username)).thenReturn(unMappedUser);
-        Mockito.when(modelMapper.map(unMappedUser.get(), BidAppUserShow.class)).thenReturn(bidAppUserShow);
+        Mockito.when(modelMapper.map(unMappedUser.get(), BidAppUserShowDto.class)).thenReturn(bidAppUserShowDto);
         //test
-        BidAppUserShow result = userService.getUserByUsername(username);
-        assertEquals(bidAppUserShow.getUsername(),result.getUsername());
+        BidAppUserShowDto result = userService.getUserByUsername(username);
+        assertEquals(bidAppUserShowDto.getUsername(),result.getUsername());
         Mockito.verify(userRepository,Mockito.times(1)).findById(username);
     }
 
     @Test
     void addUser() {
-        BidAppUserCreate bidAppUserCreate = new BidAppUserCreate();
+        BidAppUserCreateDto bidAppUserCreate = new BidAppUserCreateDto();
         BidAppUser savedEntity = new BidAppUser();
         Mockito.when(modelMapper.map(bidAppUserCreate,BidAppUser.class)).thenReturn(savedEntity);
 
@@ -63,7 +62,7 @@ class UserServiceTest {
 
     @Test
     void modifyExistingUser() {
-        BidAppUserCreate bidAppUserCreate = new BidAppUserCreate();
+        BidAppUserCreateDto bidAppUserCreate = new BidAppUserCreateDto();
         BidAppUser savedEntity = new BidAppUser();
         String username= "Gyuribacsi";
         Mockito.when(userRepository.findById(username)).thenReturn(Optional.of(savedEntity));
@@ -74,7 +73,7 @@ class UserServiceTest {
     }
     @Test
     void modifyNonExistingUser() {
-        BidAppUserCreate bidAppUserCreate = new BidAppUserCreate();
+        BidAppUserCreateDto bidAppUserCreate = new BidAppUserCreateDto();
         BidAppUser savedEntity = new BidAppUser();
         String username= "Gyuribacsi";
         Mockito.when(userRepository.findById(username)).thenReturn(Optional.empty());

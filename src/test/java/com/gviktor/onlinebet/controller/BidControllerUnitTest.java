@@ -9,8 +9,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.gviktor.onlinebet.dto.BidCreate;
-import com.gviktor.onlinebet.dto.BidShow;
+import com.gviktor.onlinebet.dto.create.BidCreateDto;
+import com.gviktor.onlinebet.dto.show.BidShowDto;
 import com.gviktor.onlinebet.service.BidService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 @WebMvcTest(BidController.class)
 @ExtendWith(SpringExtension.class)
 public class BidControllerUnitTest {
@@ -38,28 +37,28 @@ public class BidControllerUnitTest {
     @Autowired
     MockMvc mockMvc;
 
-    private List<BidShow> getBids(){
-        List<BidShow> bids = new ArrayList<>();
-        BidShow bidShow1= new BidShow();
-        bidShow1.setBidId(1);
-        bidShow1.setBidAmount(1000);
-        bidShow1.setBidType("sport");
-        bidShow1.setDate(LocalDate.of(2022,11,2));
-        bidShow1.setPrize(20000);
-        BidShow bidShow2= new BidShow();
-        bidShow2.setBidId(2);
-        bidShow2.setBidAmount(330);
-        bidShow2.setBidType("lotto");
-        bidShow2.setDate(LocalDate.of(2022,8,2));
-        bidShow2.setPrize(2000);
-        bids.add(bidShow1);
-        bids.add(bidShow2);
+    private List<BidShowDto> getBids(){
+        List<BidShowDto> bids = new ArrayList<>();
+        BidShowDto bidShowDto1 = new BidShowDto();
+        bidShowDto1.setBidId(1);
+        bidShowDto1.setBidAmount(1000);
+        bidShowDto1.setBidType("sport");
+        bidShowDto1.setDate(LocalDate.of(2022,11,2));
+        bidShowDto1.setPrize(20000);
+        BidShowDto bidShowDto2 = new BidShowDto();
+        bidShowDto2.setBidId(2);
+        bidShowDto2.setBidAmount(330);
+        bidShowDto2.setBidType("lotto");
+        bidShowDto2.setDate(LocalDate.of(2022,8,2));
+        bidShowDto2.setPrize(2000);
+        bids.add(bidShowDto1);
+        bids.add(bidShowDto2);
         return bids;
     }
 
     @Test
     void getAllBids() throws Exception {
-        List<BidShow> bids= getBids();
+        List<BidShowDto> bids= getBids();
         Mockito.when(bidService.getAllBids()).thenReturn(bids);
         mockMvc.perform(get("/bid"))
                 .andExpect(status().isOk())
@@ -75,7 +74,7 @@ public class BidControllerUnitTest {
 
     @Test
     void addValidBid() throws Exception {
-        BidCreate validBid= TestDatas.getValidBid();
+        BidCreateDto validBid= TestDatas.getValidBid();
         Mockito.when(bidService.addBid(validBid)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -87,7 +86,7 @@ public class BidControllerUnitTest {
     }
     @Test
     void addInvalidBid() throws Exception {
-        BidCreate invalidBid= TestDatas.getInvalidBid();
+        BidCreateDto invalidBid= TestDatas.getInvalidBid();
         Mockito.when(bidService.addBid(invalidBid)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
                 .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -99,9 +98,9 @@ public class BidControllerUnitTest {
     }
     @Test
     void getBidById() throws Exception {
-        BidShow bidShow = getBids().get(0);
-        Mockito.when(bidService.getBidById(bidShow.getBidId())).thenReturn(bidShow);
-        mockMvc.perform(get("/bid/"+bidShow.getBidId()))
+        BidShowDto bidShowDto = getBids().get(0);
+        Mockito.when(bidService.getBidById(bidShowDto.getBidId())).thenReturn(bidShowDto);
+        mockMvc.perform(get("/bid/"+ bidShowDto.getBidId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.bidId",Matchers.is(1)))
                 .andExpect(jsonPath("$.bidAmount",Matchers.is(1000)))
@@ -110,7 +109,7 @@ public class BidControllerUnitTest {
 
     @Test
     void updateValidBid() throws Exception {
-        BidCreate validBid= TestDatas.getValidBid();
+        BidCreateDto validBid= TestDatas.getValidBid();
         int id = 1;
         Mockito.when(bidService.updateBid(id,validBid)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
@@ -123,7 +122,7 @@ public class BidControllerUnitTest {
     }
     @Test
     void updateInvalidBid() throws Exception {
-        BidCreate invalidBid= TestDatas.getInvalidBid();
+        BidCreateDto invalidBid= TestDatas.getInvalidBid();
         int id = 1;
         Mockito.when(bidService.updateBid(id,invalidBid)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
@@ -137,7 +136,7 @@ public class BidControllerUnitTest {
 
     @Test
     void updateNoneExistentBidWithValidData() throws Exception {
-        BidCreate validBid= TestDatas.getInvalidBid();
+        BidCreateDto validBid= TestDatas.getInvalidBid();
         int id = 444;
         Mockito.when(bidService.updateBid(id,validBid)).thenReturn(false);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())

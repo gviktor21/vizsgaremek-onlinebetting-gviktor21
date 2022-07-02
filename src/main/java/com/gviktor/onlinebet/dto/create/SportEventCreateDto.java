@@ -1,4 +1,4 @@
-package com.gviktor.onlinebet.dto;
+package com.gviktor.onlinebet.dto.create;
 
 import com.gviktor.onlinebet.model.SportType;
 import lombok.Data;
@@ -9,7 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Data
 @NoArgsConstructor
-public class SportEventCreate {
+public class SportEventCreateDto {
     @NotNull
     private Integer eventId;
     @NotNull

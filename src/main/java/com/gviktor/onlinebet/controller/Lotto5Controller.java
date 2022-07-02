@@ -1,6 +1,7 @@
 package com.gviktor.onlinebet.controller;
 
-import com.gviktor.onlinebet.dto.*;
+import com.gviktor.onlinebet.dto.create.Lotto5CreateDto;
+import com.gviktor.onlinebet.dto.show.Lotto5ShowDto;
 import com.gviktor.onlinebet.service.Lotto5Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,18 +27,18 @@ public class Lotto5Controller {
     }
 
     @GetMapping
-    public ResponseEntity<List<Lotto5Show>> getAllLotto5Beds(){
+    public ResponseEntity<List<Lotto5ShowDto>> getAllLotto5Beds(){
         logger.info("http get request invoked to: '/lotto5'");
         return new ResponseEntity<>(service.getAllLotto5(), HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    public ResponseEntity<Lotto5Show> getLotto5EventResult(@PathVariable int id) {
+    public ResponseEntity<Lotto5ShowDto> getLotto5EventResult(@PathVariable int id) {
         logger.info("http get request invoked to: '/lotto5/{id}'");
         return new ResponseEntity<>(service.getLotto5ById(id),HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<Void> addLotto5Result(@RequestBody @Valid Lotto5Create lotto5Create, BindingResult bindingResult){
-        if (bindingResult.hasErrors() || !service.addLotto5Result(lotto5Create)){
+    public ResponseEntity<Void> addLotto5Result(@RequestBody @Valid Lotto5CreateDto lotto5CreateDto, BindingResult bindingResult){
+        if (bindingResult.hasErrors() || !service.addLotto5Result(lotto5CreateDto)){
             logger.info("http post request invoked to: '/lotto5/{id}' failed due to invalid lotto5 data");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
@@ -45,8 +46,8 @@ public class Lotto5Controller {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PutMapping("/{id}")
-    public ResponseEntity<Void> modifyLotto5Result(@RequestBody @Valid Lotto5Create lotto5Create,@PathVariable int id ,BindingResult bindingResult){
-        if (bindingResult.hasErrors() || !service.updateLotto5Result(id, lotto5Create)){
+    public ResponseEntity<Void> modifyLotto5Result(@RequestBody @Valid Lotto5CreateDto lotto5CreateDto, @PathVariable int id , BindingResult bindingResult){
+        if (bindingResult.hasErrors() || !service.updateLotto5Result(id, lotto5CreateDto)){
             logger.info("http put request invoked to: '/lotto5/{id}' failed due to invalid lotto5 data");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }

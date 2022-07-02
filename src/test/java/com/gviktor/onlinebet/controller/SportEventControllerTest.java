@@ -8,12 +8,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gviktor.onlinebet.dto.EventCreate;
-import com.gviktor.onlinebet.dto.SportEventCreate;
-import com.gviktor.onlinebet.dto.SportEventShow;
-import com.gviktor.onlinebet.dto.SportParticipantShow;
-import com.gviktor.onlinebet.model.SportEvent;
-import com.gviktor.onlinebet.model.SportParticipant;
+import com.gviktor.onlinebet.dto.create.SportEventCreateDto;
+import com.gviktor.onlinebet.dto.show.SportEventShowDto;
 import com.gviktor.onlinebet.model.SportType;
 import com.gviktor.onlinebet.service.SportEventService;
 import org.hamcrest.Matchers;
@@ -30,8 +26,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @WebMvcTest(SportEventController.class)
 @ExtendWith(SpringExtension.class)
 class SportEventControllerTest {
@@ -44,14 +38,14 @@ class SportEventControllerTest {
 
     private String url="/sportevent";
 
-    private List<SportEventShow> getSportEvents(){
-        List<SportEventShow> sportEvents = new ArrayList<>();
-        SportEventShow sportEvent1 = new SportEventShow();
+    private List<SportEventShowDto> getSportEvents(){
+        List<SportEventShowDto> sportEvents = new ArrayList<>();
+        SportEventShowDto sportEvent1 = new SportEventShowDto();
         sportEvent1.setEventId(1);
         sportEvent1.setSportType(SportType.FORMULAONE);
         sportEvent1.setWinner(TestDatas.getParticipants().get(0));
 
-        SportEventShow sportEvent2 = new SportEventShow();
+        SportEventShowDto sportEvent2 = new SportEventShowDto();
         sportEvent2.setEventId(2);
         sportEvent2.setSportType(SportType.FOOTBALL);
         sportEvent2.setWinner(TestDatas.getParticipants().get(1));
@@ -59,23 +53,23 @@ class SportEventControllerTest {
         sportEvents.add(sportEvent2);
       return  sportEvents;
     }
-    private SportEventCreate getValidSportEvent(){
-        SportEventCreate sportEventCreate = new SportEventCreate();
-        sportEventCreate.setEventId(1);
-        sportEventCreate.setSportType(SportType.FOOTBALL);
-        sportEventCreate.setWinnerId(1);
-        return  sportEventCreate;
+    private SportEventCreateDto getValidSportEvent(){
+        SportEventCreateDto sportEventCreateDto = new SportEventCreateDto();
+        sportEventCreateDto.setEventId(1);
+        sportEventCreateDto.setSportType(SportType.FOOTBALL);
+        sportEventCreateDto.setWinnerId(1);
+        return sportEventCreateDto;
     }
 
-    private SportEventCreate getInvalidSportEvent(){
-        SportEventCreate sportEventCreate = new SportEventCreate();
-        sportEventCreate.setSportType(SportType.FOOTBALL);
-        sportEventCreate.setWinnerId(1);
-        return sportEventCreate;
+    private SportEventCreateDto getInvalidSportEvent(){
+        SportEventCreateDto sportEventCreateDto = new SportEventCreateDto();
+        sportEventCreateDto.setSportType(SportType.FOOTBALL);
+        sportEventCreateDto.setWinnerId(1);
+        return sportEventCreateDto;
     }
     @Test
     void getAllSportEvents() throws Exception{
-        List<SportEventShow> sportEvents = getSportEvents();
+        List<SportEventShowDto> sportEvents = getSportEvents();
         Mockito.when(sportEventService.getAllSportEvent()).thenReturn(sportEvents);
         mockMvc.perform(get(url)).
                 andExpect(status().isOk())
@@ -93,7 +87,7 @@ class SportEventControllerTest {
 
     @Test
     void addValidSportEvent() throws Exception{
-        SportEventCreate validEvent = getValidSportEvent();
+        SportEventCreateDto validEvent = getValidSportEvent();
         Mockito.when(sportEventService.addSportEvent(validEvent)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)
@@ -102,7 +96,7 @@ class SportEventControllerTest {
     }
     @Test
     void addInvalidSportEvent() throws Exception{
-        SportEventCreate invalidEvent = getInvalidSportEvent();
+        SportEventCreateDto invalidEvent = getInvalidSportEvent();
         Mockito.when(sportEventService.addSportEvent(invalidEvent)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)
@@ -111,7 +105,7 @@ class SportEventControllerTest {
     }
     @Test
     void getSportEvent() throws Exception {
-        SportEventShow sportEvent = getSportEvents().get(0);
+        SportEventShowDto sportEvent = getSportEvents().get(0);
         Mockito.when(sportEventService.getSportEventById(sportEvent.getEventId())).thenReturn(sportEvent);
         mockMvc.perform(get(url+"/"+sportEvent.getEventId())).
                 andExpect(status().isOk())
@@ -122,7 +116,7 @@ class SportEventControllerTest {
 
     @Test
     void updateValidSportEvent() throws Exception {
-        SportEventCreate validEvent = getValidSportEvent();
+        SportEventCreateDto validEvent = getValidSportEvent();
         int id=1;
         Mockito.when(sportEventService.updateSportEvent(id,validEvent)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -133,7 +127,7 @@ class SportEventControllerTest {
 
     @Test
     void updateInvalidSportEvent() throws Exception {
-        SportEventCreate inValid = getInvalidSportEvent();
+        SportEventCreateDto inValid = getInvalidSportEvent();
         int id=1;
         Mockito.when(sportEventService.updateSportEvent(id,inValid)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -143,7 +137,7 @@ class SportEventControllerTest {
     }
     @Test
     void updateNonExistingSportEventWithValidData() throws Exception {
-        SportEventCreate validEvent = getValidSportEvent();
+        SportEventCreateDto validEvent = getValidSportEvent();
         int id=1;
         Mockito.when(sportEventService.updateSportEvent(id,validEvent)).thenReturn(false);
         ObjectMapper objectMapper = new ObjectMapper();

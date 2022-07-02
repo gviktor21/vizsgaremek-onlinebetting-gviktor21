@@ -7,8 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.gviktor.onlinebet.dto.BidLotto5Create;
-import com.gviktor.onlinebet.dto.BidLotto5Show;
+import com.gviktor.onlinebet.dto.create.BidLotto5CreateDto;
+import com.gviktor.onlinebet.dto.show.BidLotto5ShowDto;
 import com.gviktor.onlinebet.service.BidLotto5Service;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 @WebMvcTest(BidLotto5Controller.class)
 @ExtendWith(SpringExtension.class)
 class BidLotto5ControllerTest {
@@ -35,50 +34,50 @@ class BidLotto5ControllerTest {
     @MockBean
     BidLotto5Service bidLotto5Service;
 
-    List<BidLotto5Show> getLottoBids(){
-        List<BidLotto5Show> bidLotto5Shows = new ArrayList<>();
+    List<BidLotto5ShowDto> getLottoBids(){
+        List<BidLotto5ShowDto> bidLotto5ShowDtos = new ArrayList<>();
 
-        BidLotto5Show bidLotto5Show1 = new BidLotto5Show();
-        bidLotto5Show1.setBidId(1);
-        bidLotto5Show1.setNumber1(12);
-        bidLotto5Show1.setNumber2(22);
-        bidLotto5Show1.setNumber3(33);
-        bidLotto5Show1.setNumber4(4);
-        bidLotto5Show1.setNumber5(10);
+        BidLotto5ShowDto bidLotto5ShowDto1 = new BidLotto5ShowDto();
+        bidLotto5ShowDto1.setBidId(1);
+        bidLotto5ShowDto1.setNumber1(12);
+        bidLotto5ShowDto1.setNumber2(22);
+        bidLotto5ShowDto1.setNumber3(33);
+        bidLotto5ShowDto1.setNumber4(4);
+        bidLotto5ShowDto1.setNumber5(10);
 
-        BidLotto5Show bidLotto5Show2 = new BidLotto5Show();
-        bidLotto5Show2.setBidId(2);
-        bidLotto5Show2.setNumber1(11);
-        bidLotto5Show2.setNumber2(45);
-        bidLotto5Show2.setNumber3(5);
-        bidLotto5Show2.setNumber4(4);
-        bidLotto5Show2.setNumber5(28);
+        BidLotto5ShowDto bidLotto5ShowDto2 = new BidLotto5ShowDto();
+        bidLotto5ShowDto2.setBidId(2);
+        bidLotto5ShowDto2.setNumber1(11);
+        bidLotto5ShowDto2.setNumber2(45);
+        bidLotto5ShowDto2.setNumber3(5);
+        bidLotto5ShowDto2.setNumber4(4);
+        bidLotto5ShowDto2.setNumber5(28);
 
-        bidLotto5Shows.add(bidLotto5Show1);
-        bidLotto5Shows.add(bidLotto5Show2);
-        return bidLotto5Shows;
+        bidLotto5ShowDtos.add(bidLotto5ShowDto1);
+        bidLotto5ShowDtos.add(bidLotto5ShowDto2);
+        return bidLotto5ShowDtos;
     }
-    BidLotto5Create getValidLotto5Bid(){
-        BidLotto5Create bidLotto5Create = new BidLotto5Create();
-        bidLotto5Create.setNumber1(1);
-        bidLotto5Create.setNumber2(2);
-        bidLotto5Create.setNumber3(4);
-        bidLotto5Create.setNumber4(5);
-        bidLotto5Create.setNumber5(6);
-        return bidLotto5Create;
+    BidLotto5CreateDto getValidLotto5Bid(){
+        BidLotto5CreateDto bidLotto5CreateDto = new BidLotto5CreateDto();
+        bidLotto5CreateDto.setNumber1(1);
+        bidLotto5CreateDto.setNumber2(2);
+        bidLotto5CreateDto.setNumber3(4);
+        bidLotto5CreateDto.setNumber4(5);
+        bidLotto5CreateDto.setNumber5(6);
+        return bidLotto5CreateDto;
     }
-    BidLotto5Create getInvalidLotto5Bid(){
-        BidLotto5Create bidLotto5Create = new BidLotto5Create();
-        bidLotto5Create.setNumber1(1);
-        bidLotto5Create.setNumber2(2);
-        bidLotto5Create.setNumber3(4);
-        bidLotto5Create.setNumber4(8888);
-        bidLotto5Create.setNumber5(6);
-        return bidLotto5Create;
+    BidLotto5CreateDto getInvalidLotto5Bid(){
+        BidLotto5CreateDto bidLotto5CreateDto = new BidLotto5CreateDto();
+        bidLotto5CreateDto.setNumber1(1);
+        bidLotto5CreateDto.setNumber2(2);
+        bidLotto5CreateDto.setNumber3(4);
+        bidLotto5CreateDto.setNumber4(8888);
+        bidLotto5CreateDto.setNumber5(6);
+        return bidLotto5CreateDto;
     }
     @Test
     void getAllLotto5Bids() throws Exception {
-        List<BidLotto5Show> lottoBids = getLottoBids();
+        List<BidLotto5ShowDto> lottoBids = getLottoBids();
         Mockito.when(bidLotto5Service.getAllLotto5Bids()).thenReturn(lottoBids);
         mockMvc.perform(get(url))
                 .andExpect(status().isOk())
@@ -94,7 +93,7 @@ class BidLotto5ControllerTest {
 
     @Test
     void addValidLotto5Bid() throws Exception {
-        BidLotto5Create validBidLotto5 = getValidLotto5Bid();
+        BidLotto5CreateDto validBidLotto5 = getValidLotto5Bid();
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(bidLotto5Service.addBid5Lotto(validBidLotto5)).thenReturn(true);
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)
@@ -105,7 +104,7 @@ class BidLotto5ControllerTest {
 
     @Test
     void addInvalidLotto5Bid() throws Exception {
-        BidLotto5Create invalidBidLotto5 = getInvalidLotto5Bid();
+        BidLotto5CreateDto invalidBidLotto5 = getInvalidLotto5Bid();
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(bidLotto5Service.addBid5Lotto(invalidBidLotto5)).thenReturn(true);
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)
@@ -115,7 +114,7 @@ class BidLotto5ControllerTest {
     }
     @Test
     void addValidLotto5BidButBidOrEventNotExists() throws Exception {
-        BidLotto5Create validBidLotto5 = getValidLotto5Bid();
+        BidLotto5CreateDto validBidLotto5 = getValidLotto5Bid();
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(bidLotto5Service.addBid5Lotto(validBidLotto5)).thenReturn(false);
         mockMvc.perform(post(url).contentType(MediaType.APPLICATION_JSON)
@@ -125,9 +124,9 @@ class BidLotto5ControllerTest {
     }
     @Test
     void getLotto5ById() throws Exception {
-        BidLotto5Show bidLotto5Show = getLottoBids().get(1);
-        Mockito.when(bidLotto5Service.getBidLotto5ById(bidLotto5Show.getBidId())).thenReturn(bidLotto5Show);
-        mockMvc.perform(get(url+"/"+bidLotto5Show.getBidId()))
+        BidLotto5ShowDto bidLotto5ShowDto = getLottoBids().get(1);
+        Mockito.when(bidLotto5Service.getBidLotto5ById(bidLotto5ShowDto.getBidId())).thenReturn(bidLotto5ShowDto);
+        mockMvc.perform(get(url+"/"+ bidLotto5ShowDto.getBidId()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.number3",Matchers.is(5)))
                 .andExpect(jsonPath("$.bidId",Matchers.is(2)))
@@ -136,7 +135,7 @@ class BidLotto5ControllerTest {
 
     @Test
     void updateValidLotto5Bid() throws Exception {
-        BidLotto5Create validBidLotto5 = getValidLotto5Bid();
+        BidLotto5CreateDto validBidLotto5 = getValidLotto5Bid();
         int id = 1;
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(bidLotto5Service.updateBid5Lotto(id,validBidLotto5)).thenReturn(true);
@@ -147,7 +146,7 @@ class BidLotto5ControllerTest {
     }
     @Test
     void updateInvalidLotto5Bid() throws Exception {
-        BidLotto5Create invalidBidLotto5 = getInvalidLotto5Bid();
+        BidLotto5CreateDto invalidBidLotto5 = getInvalidLotto5Bid();
         int id = 1;
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(bidLotto5Service.updateBid5Lotto(id,invalidBidLotto5)).thenReturn(true);
@@ -158,7 +157,7 @@ class BidLotto5ControllerTest {
     }
     @Test
     void updateNotExistingLotto5BidWithValidData() throws Exception {
-        BidLotto5Create validBidLotto5 = getValidLotto5Bid();
+        BidLotto5CreateDto validBidLotto5 = getValidLotto5Bid();
         int id = 1;
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(bidLotto5Service.updateBid5Lotto(id,validBidLotto5)).thenReturn(false);

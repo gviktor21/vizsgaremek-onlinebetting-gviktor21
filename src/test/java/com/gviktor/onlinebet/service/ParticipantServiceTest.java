@@ -1,13 +1,9 @@
 package com.gviktor.onlinebet.service;
 
 import com.gviktor.onlinebet.controller.TestDatas;
-import com.gviktor.onlinebet.dto.EventCreate;
-import com.gviktor.onlinebet.dto.EventShow;
-import com.gviktor.onlinebet.dto.ParticipantCreate;
-import com.gviktor.onlinebet.dto.ParticipantShow;
-import com.gviktor.onlinebet.model.Event;
+import com.gviktor.onlinebet.dto.create.ParticipantCreateDto;
+import com.gviktor.onlinebet.dto.show.ParticipantShowDto;
 import com.gviktor.onlinebet.model.Participant;
-import com.gviktor.onlinebet.repository.EventRepository;
 import com.gviktor.onlinebet.repository.ParticipantRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,32 +32,32 @@ class ParticipantServiceTest {
     @Test
     void getAllParticipant() {
         Mockito.when(participantRepository.findAll()).thenReturn(TestDatas.getParticipantEntities());
-        List<ParticipantShow> list = participantService.getAllParticipant();
+        List<ParticipantShowDto> list = participantService.getAllParticipant();
         assertEquals(2,list.size());
         Mockito.verify(participantRepository,Mockito.times(1)).findAll();
     }
 
     @Test
     void getParticipantById() {
-        ParticipantShow participantShow = TestDatas.getParticipants().get(0);
-        int id = participantShow.getParticipantId();
+        ParticipantShowDto participantShowDto = TestDatas.getParticipants().get(0);
+        int id = participantShowDto.getParticipantId();
         Optional<Participant> unMappedParticipant= Optional.of(TestDatas.getParticipantEntities().get(0));
         Mockito.when(participantRepository.findById(id)).thenReturn(unMappedParticipant);
-        Mockito.when(modelMapper.map(unMappedParticipant.get(), ParticipantShow.class)).thenReturn(participantShow);
+        Mockito.when(modelMapper.map(unMappedParticipant.get(), ParticipantShowDto.class)).thenReturn(participantShowDto);
         //test
-        ParticipantShow result = participantService.getParticipantById(id);
-        assertEquals(participantShow.getParticipantId(),result.getParticipantId());
-        assertEquals(participantShow.getName(),result.getName());
+        ParticipantShowDto result = participantService.getParticipantById(id);
+        assertEquals(participantShowDto.getParticipantId(),result.getParticipantId());
+        assertEquals(participantShowDto.getName(),result.getName());
         Mockito.verify(participantRepository,Mockito.times(1)).findById(id);
     }
 
     @Test
     void addParticipant() {
-        ParticipantCreate participantCreate = new ParticipantCreate();
+        ParticipantCreateDto participantCreateDto = new ParticipantCreateDto();
         Participant savedEntity = new Participant();
-        Mockito.when(modelMapper.map(participantCreate,Participant.class)).thenReturn(savedEntity);
+        Mockito.when(modelMapper.map(participantCreateDto,Participant.class)).thenReturn(savedEntity);
 
-        participantService.addParticipant(participantCreate);
+        participantService.addParticipant(participantCreateDto);
         Mockito.verify(participantRepository,Mockito.times(1)).save(savedEntity);
     }
 
@@ -74,24 +70,24 @@ class ParticipantServiceTest {
 
     @Test
     void updateParticipant() {
-        ParticipantCreate participantCreate = new ParticipantCreate();
+        ParticipantCreateDto participantCreateDto = new ParticipantCreateDto();
         Participant savedEntity = new Participant();
         int id=4;
         Mockito.when(participantRepository.findById(id)).thenReturn(Optional.of(savedEntity));
-        Mockito.when(modelMapper.map(participantCreate,Participant.class)).thenReturn(savedEntity);
+        Mockito.when(modelMapper.map(participantCreateDto,Participant.class)).thenReturn(savedEntity);
 
-        assertTrue(participantService.updateParticipant(id,participantCreate));
+        assertTrue(participantService.updateParticipant(id, participantCreateDto));
         Mockito.verify(participantRepository,Mockito.times(1)).save(savedEntity);
     }
     @Test
     void updateNonExistingParticipant() {
-        ParticipantCreate participantCreate = new ParticipantCreate();
+        ParticipantCreateDto participantCreateDto = new ParticipantCreateDto();
         Participant savedEntity = new Participant();
         int id=4;
         Mockito.when(participantRepository.findById(id)).thenReturn(Optional.empty());
-        Mockito.when(modelMapper.map(participantCreate,Participant.class)).thenReturn(savedEntity);
+        Mockito.when(modelMapper.map(participantCreateDto,Participant.class)).thenReturn(savedEntity);
 
-        assertFalse(participantService.updateParticipant(id,participantCreate));
+        assertFalse(participantService.updateParticipant(id, participantCreateDto));
         Mockito.verify(participantRepository,Mockito.times(0)).save(savedEntity);
     }
 }

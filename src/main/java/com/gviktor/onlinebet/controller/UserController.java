@@ -1,7 +1,7 @@
 package com.gviktor.onlinebet.controller;
 
-import com.gviktor.onlinebet.dto.BidAppUserCreate;
-import com.gviktor.onlinebet.dto.BidAppUserShow;
+import com.gviktor.onlinebet.dto.create.BidAppUserCreateDto;
+import com.gviktor.onlinebet.dto.show.BidAppUserShowDto;
 import com.gviktor.onlinebet.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,13 +28,13 @@ public class UserController {
     }
 
     @GetMapping
-    public ResponseEntity<List<BidAppUserShow>> getAllUser() {
+    public ResponseEntity<List<BidAppUserShowDto>> getAllUser() {
         logger.info("http get request invoked to: '/user'");
         return new ResponseEntity<>( userService.getAllUser(), HttpStatus.OK);
     }
 
     @PutMapping("/{username}")
-    public ResponseEntity<Void> update(@PathVariable String username,@RequestBody @Valid BidAppUserCreate bidAppUserCreate, BindingResult bindingResult){
+    public ResponseEntity<Void> update(@PathVariable String username, @RequestBody @Valid BidAppUserCreateDto bidAppUserCreate, BindingResult bindingResult){
         if(bindingResult.hasErrors() ||  !userService.modifyUser(username,bidAppUserCreate) ){
             logger.info("http put request invoked to: '/user/{username} failed due to bad request data'");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -43,7 +43,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @PostMapping
-    public ResponseEntity<Void> addUser(@RequestBody @Valid BidAppUserCreate bidAppUserCreate,BindingResult bindingResult){
+    public ResponseEntity<Void> addUser(@RequestBody @Valid BidAppUserCreateDto bidAppUserCreate, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             logger.info("http post request invoked to: '/user failed due to invalid request data'");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -59,7 +59,7 @@ public class UserController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
     @GetMapping("/{username}")
-    public ResponseEntity<BidAppUserShow> getUserById (@PathVariable String username){
+    public ResponseEntity<BidAppUserShowDto> getUserById (@PathVariable String username){
         logger.info("http get request invoked to: '/user/{username}'");
         return new ResponseEntity<>(userService.getUserByUsername(username),HttpStatus.OK);
     }

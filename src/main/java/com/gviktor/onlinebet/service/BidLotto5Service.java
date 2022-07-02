@@ -1,7 +1,7 @@
 package com.gviktor.onlinebet.service;
 
-import com.gviktor.onlinebet.dto.BidLotto5Create;
-import com.gviktor.onlinebet.dto.BidLotto5Show;
+import com.gviktor.onlinebet.dto.create.BidLotto5CreateDto;
+import com.gviktor.onlinebet.dto.show.BidLotto5ShowDto;
 import com.gviktor.onlinebet.model.Bid;
 import com.gviktor.onlinebet.model.BidLotto5;
 import com.gviktor.onlinebet.model.Event;
@@ -33,49 +33,49 @@ public class BidLotto5Service {
         this.bidRepository = bidRepository;
         this.mapper = modelMapper;
     }
-    private List<BidLotto5Show> convertList(List<BidLotto5> lotto5Bids){
-        return  lotto5Bids.stream().map(a->mapper.map(a, BidLotto5Show.class)).collect(Collectors.toList());
+    private List<BidLotto5ShowDto> convertList(List<BidLotto5> lotto5Bids){
+        return  lotto5Bids.stream().map(a->mapper.map(a, BidLotto5ShowDto.class)).collect(Collectors.toList());
     }
 
-    public List<BidLotto5Show> getAllLotto5Bids() {
+    public List<BidLotto5ShowDto> getAllLotto5Bids() {
         return convertList(bidLotto5Repository.findAll());
     }
 
-    public boolean addBid5Lotto(BidLotto5Create bidLotto5Create) {
-        if (testNumbers(bidLotto5Create) && testIfValidBidAndEventExists(bidLotto5Create)){
-            bidLotto5Repository.save(mapper.map(bidLotto5Create,BidLotto5.class));
+    public boolean addBid5Lotto(BidLotto5CreateDto bidLotto5CreateDto) {
+        if (testNumbers(bidLotto5CreateDto) && testIfValidBidAndEventExists(bidLotto5CreateDto)){
+            bidLotto5Repository.save(mapper.map(bidLotto5CreateDto,BidLotto5.class));
             return true;
         }
         return false;
     }
 
-    private boolean testIfValidBidAndEventExists(BidLotto5Create bidLotto5Create) {
-        Bid bid = bidRepository.findById(bidLotto5Create.getBidId()).orElse(Bid.builder().bidId(-1).build());
+    private boolean testIfValidBidAndEventExists(BidLotto5CreateDto bidLotto5CreateDto) {
+        Bid bid = bidRepository.findById(bidLotto5CreateDto.getBidId()).orElse(Bid.builder().bidId(-1).build());
         Optional<Event> event = eventRepository.findById(bid.getBidId());
         return (event.isPresent() && event.get().getEventType().equals(EventType.LOTTO5) && event.get().getStartDate().isAfter(bid.getDate()));
     }
 
-    public BidLotto5Show getBidLotto5ById(int id) {
-        return mapper.map(bidLotto5Repository.findById(id),BidLotto5Show.class);
+    public BidLotto5ShowDto getBidLotto5ById(int id) {
+        return mapper.map(bidLotto5Repository.findById(id), BidLotto5ShowDto.class);
     }
 
-    public boolean updateBid5Lotto(int id, BidLotto5Create bidLotto5Create) {
+    public boolean updateBid5Lotto(int id, BidLotto5CreateDto bidLotto5CreateDto) {
         Optional<BidLotto5> bidLotto5 = bidLotto5Repository.findById(id);
-        if (bidLotto5.isPresent() && testNumbers(bidLotto5Create)){
-            bidLotto5Create.setBidId(id);
+        if (bidLotto5.isPresent() && testNumbers(bidLotto5CreateDto)){
+            bidLotto5CreateDto.setBidId(id);
             bidLotto5Repository.save(mapper.map(bidLotto5, BidLotto5.class));
             return true;
         }
         return false;
     }
-    private boolean testNumbers(BidLotto5Create bidLotto5Create){
+    private boolean testNumbers(BidLotto5CreateDto bidLotto5CreateDto){
         Set<Integer> numbers = new HashSet<>();
         int lottoType=5;
-        numbers.add(bidLotto5Create.getNumber1());
-        numbers.add(bidLotto5Create.getNumber2());
-        numbers.add(bidLotto5Create.getNumber3());
-        numbers.add(bidLotto5Create.getNumber4());
-        numbers.add(bidLotto5Create.getNumber5());
+        numbers.add(bidLotto5CreateDto.getNumber1());
+        numbers.add(bidLotto5CreateDto.getNumber2());
+        numbers.add(bidLotto5CreateDto.getNumber3());
+        numbers.add(bidLotto5CreateDto.getNumber4());
+        numbers.add(bidLotto5CreateDto.getNumber5());
         return numbers.size()==lottoType;
     }
 

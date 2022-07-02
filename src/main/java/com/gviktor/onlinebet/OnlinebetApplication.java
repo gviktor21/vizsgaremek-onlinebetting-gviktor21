@@ -10,9 +10,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 //todo: docker konténer elkészítése
 //todo: tesztmetódusok nevét checkolni, eléírni test szót nem ártana
 //todo: TestData-ba kirakni testadatokat
-//todo: Pár mappert átnézni.
 //todo: readme.md elkészítenni és postmannel az ottani endpointokat tesztelni
-//todo: DTO classocat átnevezni
 @SpringBootApplication
 public class OnlinebetApplication {
 

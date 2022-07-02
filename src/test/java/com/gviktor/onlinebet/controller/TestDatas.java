@@ -1,6 +1,12 @@
 package com.gviktor.onlinebet.controller;
 
-import com.gviktor.onlinebet.dto.*;
+import com.gviktor.onlinebet.dto.create.BidAppUserCreateDto;
+import com.gviktor.onlinebet.dto.create.BidCreateDto;
+import com.gviktor.onlinebet.dto.create.EventCreateDto;
+import com.gviktor.onlinebet.dto.show.BidAppUserShowDto;
+import com.gviktor.onlinebet.dto.show.BidShowDto;
+import com.gviktor.onlinebet.dto.show.EventShowDto;
+import com.gviktor.onlinebet.dto.show.ParticipantShowDto;
 import com.gviktor.onlinebet.model.*;
 
 import java.time.LocalDate;
@@ -8,39 +14,39 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TestDatas {
-    public static List<BidShow> getBids(){
-        List<BidShow> bids = new ArrayList<>();
-        BidShow bidShow1= new BidShow();
-        bidShow1.setBidId(1);
-        bidShow1.setBidAmount(1000);
-        bidShow1.setBidType("sport");
-        bidShow1.setDate(LocalDate.of(2022,11,2));
-        bidShow1.setPrize(20000);
-        BidShow bidShow2= new BidShow();
-        bidShow2.setBidId(2);
-        bidShow2.setBidAmount(330);
-        bidShow2.setBidType("lotto");
-        bidShow2.setDate(LocalDate.of(2022,8,2));
-        bidShow2.setPrize(2000);
-        bids.add(bidShow1);
-        bids.add(bidShow2);
+    public static List<BidShowDto> getBids(){
+        List<BidShowDto> bids = new ArrayList<>();
+        BidShowDto bidShowDto1 = new BidShowDto();
+        bidShowDto1.setBidId(1);
+        bidShowDto1.setBidAmount(1000);
+        bidShowDto1.setBidType("sport");
+        bidShowDto1.setDate(LocalDate.of(2022,11,2));
+        bidShowDto1.setPrize(20000);
+        BidShowDto bidShowDto2 = new BidShowDto();
+        bidShowDto2.setBidId(2);
+        bidShowDto2.setBidAmount(330);
+        bidShowDto2.setBidType("lotto");
+        bidShowDto2.setDate(LocalDate.of(2022,8,2));
+        bidShowDto2.setPrize(2000);
+        bids.add(bidShowDto1);
+        bids.add(bidShowDto2);
         return bids;
     }
-    public static List<ParticipantShow> getParticipants(){
-        List<ParticipantShow> participants = new ArrayList<>();
+    public static List<ParticipantShowDto> getParticipants(){
+        List<ParticipantShowDto> participants = new ArrayList<>();
 
-        ParticipantShow participantShow1 = new ParticipantShow();
-        participantShow1.setParticipantId(1);
-        participantShow1.setName("Viktor");
-        participantShow1.setSportType(SportType.ROADRACECYCLING);
+        ParticipantShowDto participantShowDto1 = new ParticipantShowDto();
+        participantShowDto1.setParticipantId(1);
+        participantShowDto1.setName("Viktor");
+        participantShowDto1.setSportType(SportType.ROADRACECYCLING);
 
-        ParticipantShow participantShow2 = new ParticipantShow();
-        participantShow2.setParticipantId(2);
-        participantShow2.setName("Soros");
-        participantShow2.setSportType(SportType.FORMULAONE);
+        ParticipantShowDto participantShowDto2 = new ParticipantShowDto();
+        participantShowDto2.setParticipantId(2);
+        participantShowDto2.setName("Soros");
+        participantShowDto2.setSportType(SportType.FORMULAONE);
 
-        participants.add(participantShow1);
-        participants.add(participantShow2);
+        participants.add(participantShowDto1);
+        participants.add(participantShowDto2);
         return participants;
     }
     public static List<Participant> getParticipantEntities(){
@@ -62,14 +68,14 @@ public class TestDatas {
     }
 
 
-    public static List<BidAppUserShow> getUsers(){
-        List<BidAppUserShow> userList = new ArrayList<>();
-        BidAppUserShow user1 = new BidAppUserShow();
+    public static List<BidAppUserShowDto> getUsers(){
+        List<BidAppUserShowDto> userList = new ArrayList<>();
+        BidAppUserShowDto user1 = new BidAppUserShowDto();
         user1.setUsername("viktor");
         user1.setPassword("passw");
         user1.setEmail("valami@freemail.hu");
         user1.setAccountLevel(1);
-        BidAppUserShow user2 = new BidAppUserShow();
+        BidAppUserShowDto user2 = new BidAppUserShowDto();
         user2.setPassword("passw2");
         user2.setUsername("admin");
         user2.setEmail("valami@freemail.hu");
@@ -94,23 +100,23 @@ public class TestDatas {
         return userList;
     }
 
-    public static List<EventShow> getEvents(){
-        List<EventShow> events = new ArrayList<>();
-        EventShow eventShow1 = new EventShow();
-        eventShow1.setEventId(1);
-        eventShow1.setEventType(EventType.SPORT);
-        eventShow1.setStartDate(LocalDate.of(1111,11,11));
-        EventShow eventShow2 = new EventShow();
-        eventShow2.setEventId(2);
-        eventShow2.setEventType(EventType.SPORT);
-        eventShow2.setStartDate(LocalDate.of(2000,10,4));
-        EventShow eventShow3 = new EventShow();
-        eventShow3.setEventId(3);
-        eventShow3.setEventType(EventType.LOTTO5);
-        eventShow3.setStartDate(LocalDate.of(2030,1,1));
-        events.add(eventShow1);
-        events.add(eventShow2);
-        events.add(eventShow3);
+    public static List<EventShowDto> getEvents(){
+        List<EventShowDto> events = new ArrayList<>();
+        EventShowDto eventShowDto1 = new EventShowDto();
+        eventShowDto1.setEventId(1);
+        eventShowDto1.setEventType(EventType.SPORT);
+        eventShowDto1.setStartDate(LocalDate.of(1111,11,11));
+        EventShowDto eventShowDto2 = new EventShowDto();
+        eventShowDto2.setEventId(2);
+        eventShowDto2.setEventType(EventType.SPORT);
+        eventShowDto2.setStartDate(LocalDate.of(2000,10,4));
+        EventShowDto eventShowDto3 = new EventShowDto();
+        eventShowDto3.setEventId(3);
+        eventShowDto3.setEventType(EventType.LOTTO5);
+        eventShowDto3.setStartDate(LocalDate.of(2030,1,1));
+        events.add(eventShowDto1);
+        events.add(eventShowDto2);
+        events.add(eventShowDto3);
         return events;
     }
     public static List<Event>getEventEntities(){
@@ -133,14 +139,14 @@ public class TestDatas {
         return events;
     }
 
-    public static List<BidAppUserCreate> getUsersToPost(){
-        List<BidAppUserCreate> userList = new ArrayList<>();
-        BidAppUserCreate user1 = new BidAppUserCreate();
+    public static List<BidAppUserCreateDto> getUsersToPost(){
+        List<BidAppUserCreateDto> userList = new ArrayList<>();
+        BidAppUserCreateDto user1 = new BidAppUserCreateDto();
         user1.setUsername("viktor");
         user1.setPassword("passw");
         user1.setEmail("valami@freemail.hu");
         user1.setAccountLevel(1);
-        BidAppUserCreate user2 = new BidAppUserCreate();
+        BidAppUserCreateDto user2 = new BidAppUserCreateDto();
         user2.setPassword("passw2");
         user2.setUsername("admin");
         user2.setEmail("valami@freemail.hu");
@@ -148,34 +154,34 @@ public class TestDatas {
         userList.add(user1);userList.add(user2);
         return userList;
     }
-    public static BidCreate getValidBid(){
-        BidCreate bidCreate = new BidCreate();
-        bidCreate.setBidAmount(100);
-        bidCreate.setDate(LocalDate.now().plusDays(2));
-        bidCreate.setPrize(2400);
-        bidCreate.setBidType("Lotto");
-        bidCreate.setUsername(getUsersToPost().get(0).getUsername());
-        bidCreate.setEventId(1);
-        return bidCreate;
+    public static BidCreateDto getValidBid(){
+        BidCreateDto bidCreateDto = new BidCreateDto();
+        bidCreateDto.setBidAmount(100);
+        bidCreateDto.setDate(LocalDate.now().plusDays(2));
+        bidCreateDto.setPrize(2400);
+        bidCreateDto.setBidType("Lotto");
+        bidCreateDto.setUsername(getUsersToPost().get(0).getUsername());
+        bidCreateDto.setEventId(1);
+        return bidCreateDto;
     }
-    static BidCreate getInvalidBid(){
-        BidCreate bidCreate = new BidCreate();
-        bidCreate.setBidAmount(-100);
-        bidCreate.setDate(LocalDate.now().plusDays(2));
-        bidCreate.setPrize(2400);
-        bidCreate.setBidType("Sport");
-        return bidCreate;
+    static BidCreateDto getInvalidBid(){
+        BidCreateDto bidCreateDto = new BidCreateDto();
+        bidCreateDto.setBidAmount(-100);
+        bidCreateDto.setDate(LocalDate.now().plusDays(2));
+        bidCreateDto.setPrize(2400);
+        bidCreateDto.setBidType("Sport");
+        return bidCreateDto;
     }
-    public static EventCreate getValidEventToPost() {
-        EventCreate eventCreate = new EventCreate();
-        eventCreate.setDescription("Lottohuzas");
-        eventCreate.setStartDate(LocalDate.now().plusMonths(1));
-        eventCreate.setEndDate(LocalDate.now().plusMonths(1));
-        eventCreate.setEventType(EventType.LOTTO5);
-        return eventCreate;
+    public static EventCreateDto getValidEventToPost() {
+        EventCreateDto eventCreateDto = new EventCreateDto();
+        eventCreateDto.setDescription("Lottohuzas");
+        eventCreateDto.setStartDate(LocalDate.now().plusMonths(1));
+        eventCreateDto.setEndDate(LocalDate.now().plusMonths(1));
+        eventCreateDto.setEventType(EventType.LOTTO5);
+        return eventCreateDto;
     }
-    public static EventShow getValidEventToPostShowAsFirstEvent() {
-        EventShow eventCreate = new EventShow();
+    public static EventShowDto getValidEventToPostShowAsFirstEvent() {
+        EventShowDto eventCreate = new EventShowDto();
         eventCreate.setEventId(1); //might couse errors
         eventCreate.setDescription("Lottohuzas");
         eventCreate.setStartDate(LocalDate.now().plusMonths(1));

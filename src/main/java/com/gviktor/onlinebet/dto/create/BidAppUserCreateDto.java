@@ -1,4 +1,4 @@
-package com.gviktor.onlinebet.dto;
+package com.gviktor.onlinebet.dto.create;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-public class BidAppUserCreate {
+public class BidAppUserCreateDto {
     @NotBlank
     @NotNull
     @Size(min = 5, max = 50, message = "Username remain between 5 and 50 characters")

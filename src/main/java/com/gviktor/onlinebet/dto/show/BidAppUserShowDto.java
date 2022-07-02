@@ -1,11 +1,11 @@
-package com.gviktor.onlinebet.dto;
+package com.gviktor.onlinebet.dto.show;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 @Data
 @NoArgsConstructor
-public class BidAppUserShow {
+public class BidAppUserShowDto {
     private String username;
     private String address;
     private LocalDate birthDate;

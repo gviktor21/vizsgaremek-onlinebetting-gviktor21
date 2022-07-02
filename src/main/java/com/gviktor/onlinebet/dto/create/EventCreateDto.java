@@ -1,4 +1,4 @@
-package com.gviktor.onlinebet.dto;
+package com.gviktor.onlinebet.dto.create;
 
 import com.gviktor.onlinebet.model.EventType;
 import lombok.Data;
@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 @Data
 @NoArgsConstructor
-public class EventCreate {
+public class EventCreateDto {
     @NotNull
     private EventType eventType;
     @NotNull

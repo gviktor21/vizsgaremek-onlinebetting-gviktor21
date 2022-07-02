@@ -1,9 +1,9 @@
 package com.gviktor.onlinebet.service;
 
-import com.gviktor.onlinebet.dto.EventShow;
-import com.gviktor.onlinebet.dto.ParticipantShow;
-import com.gviktor.onlinebet.dto.SportParticipantCreate;
-import com.gviktor.onlinebet.dto.SportParticipantShow;
+import com.gviktor.onlinebet.dto.show.EventShowDto;
+import com.gviktor.onlinebet.dto.show.ParticipantShowDto;
+import com.gviktor.onlinebet.dto.create.SportParticipantCreateDto;
+import com.gviktor.onlinebet.dto.show.SportParticipantShowDto;
 import com.gviktor.onlinebet.model.Participant;
 import com.gviktor.onlinebet.model.SportEvent;
 import com.gviktor.onlinebet.model.SportParticipant;
@@ -35,47 +35,47 @@ public class SportParticipantService {
         this.eventRepository=eventRepository;
         this.mapper = mapper;
     }
-    private List<SportParticipantShow> convertList(List<SportParticipant> sportParticipants){
+    private List<SportParticipantShowDto> convertList(List<SportParticipant> sportParticipants){
         return  sportParticipants.stream().map(sportParticipant->customMapping(sportParticipant)).collect(Collectors.toList());
     }
-    private SportParticipantShow customMapping(SportParticipant sportParticipant){
-        SportParticipantShow sportParticipantShow = new SportParticipantShow();
-        sportParticipantShow.setEvent(mapper.map(eventRepository.findById(sportParticipant.getEvent().getEventId()).get(), EventShow.class));
-        sportParticipantShow.setParticipant(mapper.map(sportParticipant.getParticipant(), ParticipantShow.class));
-        sportParticipantShow.setId(sportParticipant.getId());
-        return  sportParticipantShow;
+    private SportParticipantShowDto customMapping(SportParticipant sportParticipant){
+        SportParticipantShowDto sportParticipantShowDto = new SportParticipantShowDto();
+        sportParticipantShowDto.setEvent(mapper.map(eventRepository.findById(sportParticipant.getEvent().getEventId()).get(), EventShowDto.class));
+        sportParticipantShowDto.setParticipant(mapper.map(sportParticipant.getParticipant(), ParticipantShowDto.class));
+        sportParticipantShowDto.setId(sportParticipant.getId());
+        return sportParticipantShowDto;
     }
-    public List<SportParticipantShow> getAllSportParticipant() {
+    public List<SportParticipantShowDto> getAllSportParticipant() {
         return convertList(repository.findAll());
     }
 
-    public SportParticipantShow getSportParticipantById(int id) {
+    public SportParticipantShowDto getSportParticipantById(int id) {
         return customMapping(repository.findById(id).orElseThrow());
     }
 
-    public boolean addSportParticipant(SportParticipantCreate sportparticipantCreate) {
-        Optional<SportEvent> sportEvent = sportEventRepository.findById(sportparticipantCreate.getEventId());
-        Optional<Participant> participant = participantRepository.findById(sportparticipantCreate.getParticipantId());
+    public boolean addSportParticipant(SportParticipantCreateDto sportparticipantCreateDto) {
+        Optional<SportEvent> sportEvent = sportEventRepository.findById(sportparticipantCreateDto.getEventId());
+        Optional<Participant> participant = participantRepository.findById(sportparticipantCreateDto.getParticipantId());
         if(sportEvent.isPresent() && participant.isPresent() && sportEvent.get().getSportType()==participant.get().getSportType()){
             SportParticipant sportParticipant = new SportParticipant();
             sportParticipant.setParticipant(participant.get());
             sportParticipant.setEvent(sportEvent.get());
-            sportParticipant.setMultiplier(sportparticipantCreate.getMultiplier());
+            sportParticipant.setMultiplier(sportparticipantCreateDto.getMultiplier());
             repository.save(sportParticipant);
             return true;
         }
         return false;
     }
 
-    public boolean updateSportParticipant(int id, SportParticipantCreate sportparticipantCreate) {
-        Optional<SportEvent> sportEvent = sportEventRepository.findById(sportparticipantCreate.getEventId());
-        Optional<Participant> participant = participantRepository.findById(sportparticipantCreate.getParticipantId());
+    public boolean updateSportParticipant(int id, SportParticipantCreateDto sportparticipantCreateDto) {
+        Optional<SportEvent> sportEvent = sportEventRepository.findById(sportparticipantCreateDto.getEventId());
+        Optional<Participant> participant = participantRepository.findById(sportparticipantCreateDto.getParticipantId());
         if(sportEvent.isPresent() && participant.isPresent() && sportEvent.get().getSportType()==participant.get().getSportType()){
             SportParticipant sportParticipant = new SportParticipant();
             sportParticipant.setId(id);
             sportParticipant.setParticipant(participant.get());
             sportParticipant.setEvent(sportEvent.get());
-            sportParticipant.setMultiplier(sportparticipantCreate.getMultiplier());
+            sportParticipant.setMultiplier(sportparticipantCreateDto.getMultiplier());
             repository.save(sportParticipant);
             return true;
         }

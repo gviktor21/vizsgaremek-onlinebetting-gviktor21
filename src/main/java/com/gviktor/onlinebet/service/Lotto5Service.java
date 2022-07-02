@@ -1,7 +1,7 @@
 package com.gviktor.onlinebet.service;
 
-import com.gviktor.onlinebet.dto.Lotto5Create;
-import com.gviktor.onlinebet.dto.Lotto5Show;
+import com.gviktor.onlinebet.dto.create.Lotto5CreateDto;
+import com.gviktor.onlinebet.dto.show.Lotto5ShowDto;
 import com.gviktor.onlinebet.model.Event;
 import com.gviktor.onlinebet.model.EventType;
 import com.gviktor.onlinebet.model.Lotto5;
@@ -30,43 +30,43 @@ public class Lotto5Service {
         this.eventRepository = eventRepository;
         this.mapper = mapper;
     }
-    private List<Lotto5Show> convertList(List<Lotto5> lotto5Events){
-        return  lotto5Events.stream().map(a->mapper.map(a, Lotto5Show.class)).collect(Collectors.toList());
+    private List<Lotto5ShowDto> convertList(List<Lotto5> lotto5Events){
+        return  lotto5Events.stream().map(a->mapper.map(a, Lotto5ShowDto.class)).collect(Collectors.toList());
     }
 
-    public List<Lotto5Show> getAllLotto5() {
+    public List<Lotto5ShowDto> getAllLotto5() {
         return convertList(repository.findAll());
     }
 
-    public Lotto5Show getLotto5ById(int id) {
-        return mapper.map(repository.findById(id),Lotto5Show.class);
+    public Lotto5ShowDto getLotto5ById(int id) {
+        return mapper.map(repository.findById(id), Lotto5ShowDto.class);
     }
 
 
-    public boolean addLotto5Result(Lotto5Create lotto5Create) {
-        Optional<Event> event = eventRepository.findById(lotto5Create.getEventId());
-        if(event.isPresent() && event.get().getEventType()== EventType.LOTTO5 && testNumbers(lotto5Create)){
-            repository.save(mapper.map(lotto5Create,Lotto5.class));
+    public boolean addLotto5Result(Lotto5CreateDto lotto5CreateDto) {
+        Optional<Event> event = eventRepository.findById(lotto5CreateDto.getEventId());
+        if(event.isPresent() && event.get().getEventType()== EventType.LOTTO5 && testNumbers(lotto5CreateDto)){
+            repository.save(mapper.map(lotto5CreateDto,Lotto5.class));
             return true;
         }
         return false;
     }
-    private boolean testNumbers(Lotto5Create bidLotto5Create){
+    private boolean testNumbers(Lotto5CreateDto bidLotto5CreateDto){
         Set<Integer> numbers = new HashSet<>();
         int lottoType=5;
-        numbers.add(bidLotto5Create.getNumber1());
-        numbers.add(bidLotto5Create.getNumber2());
-        numbers.add(bidLotto5Create.getNumber3());
-        numbers.add(bidLotto5Create.getNumber4());
-        numbers.add(bidLotto5Create.getNumber5());
+        numbers.add(bidLotto5CreateDto.getNumber1());
+        numbers.add(bidLotto5CreateDto.getNumber2());
+        numbers.add(bidLotto5CreateDto.getNumber3());
+        numbers.add(bidLotto5CreateDto.getNumber4());
+        numbers.add(bidLotto5CreateDto.getNumber5());
         return numbers.size()==lottoType;
     }
 
-    public boolean updateLotto5Result(int id, Lotto5Create lotto5Create) {
-        Optional<Event> event = eventRepository.findById(lotto5Create.getEventId());
-        if(event.isPresent() && event.get().getEventType()== EventType.LOTTO5 && testNumbers(lotto5Create)){
-            lotto5Create.setEventId(id);
-            repository.save(mapper.map(lotto5Create,Lotto5.class));
+    public boolean updateLotto5Result(int id, Lotto5CreateDto lotto5CreateDto) {
+        Optional<Event> event = eventRepository.findById(lotto5CreateDto.getEventId());
+        if(event.isPresent() && event.get().getEventType()== EventType.LOTTO5 && testNumbers(lotto5CreateDto)){
+            lotto5CreateDto.setEventId(id);
+            repository.save(mapper.map(lotto5CreateDto,Lotto5.class));
             return true;
         }
         return false;

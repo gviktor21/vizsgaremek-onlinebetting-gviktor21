@@ -1,11 +1,11 @@
-package com.gviktor.onlinebet.dto;
+package com.gviktor.onlinebet.dto.show;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class BidLotto5Show {
+public class BidLotto5ShowDto {
     private int bidId;
     private int number1;
     private int number2;

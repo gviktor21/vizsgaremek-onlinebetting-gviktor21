@@ -1,7 +1,7 @@
 package com.gviktor.onlinebet.service;
 
-import com.gviktor.onlinebet.dto.ParticipantCreate;
-import com.gviktor.onlinebet.dto.ParticipantShow;
+import com.gviktor.onlinebet.dto.create.ParticipantCreateDto;
+import com.gviktor.onlinebet.dto.show.ParticipantShowDto;
 import com.gviktor.onlinebet.model.Participant;
 import com.gviktor.onlinebet.repository.ParticipantRepository;
 import org.modelmapper.ModelMapper;
@@ -19,24 +19,24 @@ public class ParticipantService {
         this.repository = repository;
         this.mapper = mapper;
     }
-    private List<ParticipantShow> convertList(List<Participant> participants){
-        return  participants.stream().map(a->mapper.map(a, ParticipantShow.class)).collect(Collectors.toList());
+    private List<ParticipantShowDto> convertList(List<Participant> participants){
+        return  participants.stream().map(a->mapper.map(a, ParticipantShowDto.class)).collect(Collectors.toList());
     }
-    public List<ParticipantShow> getAllParticipant(){
+    public List<ParticipantShowDto> getAllParticipant(){
         return convertList(repository.findAll());
     }
-    public ParticipantShow getParticipantById(int id){
-        return mapper.map(repository.findById(id).orElseThrow(),ParticipantShow.class);
+    public ParticipantShowDto getParticipantById(int id){
+        return mapper.map(repository.findById(id).orElseThrow(), ParticipantShowDto.class);
     }
-    public void addParticipant(ParticipantCreate create){
+    public void addParticipant(ParticipantCreateDto create){
         repository.save(mapper.map(create,Participant.class));
     }
     public void deleteParticipantById(int id){
         repository.deleteById(id);
     }
 
-    public boolean updateParticipant(int id, ParticipantCreate participantCreate){
-        Participant participant = mapper.map(participantCreate,Participant.class);
+    public boolean updateParticipant(int id, ParticipantCreateDto participantCreateDto){
+        Participant participant = mapper.map(participantCreateDto,Participant.class);
         if (!repository.findById(id).isPresent()){
             return false;
         }
