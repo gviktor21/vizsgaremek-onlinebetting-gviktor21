@@ -9,6 +9,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.gviktor.onlinebet.TestDatas;
 import com.gviktor.onlinebet.dto.create.BidCreateDto;
 import com.gviktor.onlinebet.dto.show.BidShowDto;
 import com.gviktor.onlinebet.service.BidService;
@@ -23,8 +24,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebMvcTest(BidController.class)
@@ -37,28 +36,10 @@ public class BidControllerUnitTest {
     @Autowired
     MockMvc mockMvc;
 
-    private List<BidShowDto> getBids(){
-        List<BidShowDto> bids = new ArrayList<>();
-        BidShowDto bidShowDto1 = new BidShowDto();
-        bidShowDto1.setBidId(1);
-        bidShowDto1.setBidAmount(1000);
-        bidShowDto1.setBidType("sport");
-        bidShowDto1.setDate(LocalDate.of(2022,11,2));
-        bidShowDto1.setPrize(20000);
-        BidShowDto bidShowDto2 = new BidShowDto();
-        bidShowDto2.setBidId(2);
-        bidShowDto2.setBidAmount(330);
-        bidShowDto2.setBidType("lotto");
-        bidShowDto2.setDate(LocalDate.of(2022,8,2));
-        bidShowDto2.setPrize(2000);
-        bids.add(bidShowDto1);
-        bids.add(bidShowDto2);
-        return bids;
-    }
 
     @Test
-    void getAllBids() throws Exception {
-        List<BidShowDto> bids= getBids();
+    void testGetAllBidsReturnsBids() throws Exception {
+        List<BidShowDto> bids= TestDatas.getBids();
         Mockito.when(bidService.getAllBids()).thenReturn(bids);
         mockMvc.perform(get("/bid"))
                 .andExpect(status().isOk())
@@ -73,7 +54,7 @@ public class BidControllerUnitTest {
     }
 
     @Test
-    void addValidBid() throws Exception {
+    void testAddValidBid() throws Exception {
         BidCreateDto validBid= TestDatas.getValidBid();
         Mockito.when(bidService.addBid(validBid)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
@@ -85,7 +66,7 @@ public class BidControllerUnitTest {
                 .andExpect(status().isOk());
     }
     @Test
-    void addInvalidBid() throws Exception {
+    void testAddInvalidBidReturnsBadRequest() throws Exception {
         BidCreateDto invalidBid= TestDatas.getInvalidBid();
         Mockito.when(bidService.addBid(invalidBid)).thenReturn(true);
         ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule())
@@ -97,8 +78,8 @@ public class BidControllerUnitTest {
                 .andExpect(status().isBadRequest());
     }
     @Test
-    void getBidById() throws Exception {
-        BidShowDto bidShowDto = getBids().get(0);
+    void testGetBidById() throws Exception {
+        BidShowDto bidShowDto = TestDatas.getBids().get(0);
         Mockito.when(bidService.getBidById(bidShowDto.getBidId())).thenReturn(bidShowDto);
         mockMvc.perform(get("/bid/"+ bidShowDto.getBidId()))
                 .andExpect(status().isOk())
@@ -108,7 +89,7 @@ public class BidControllerUnitTest {
     }
 
     @Test
-    void updateValidBid() throws Exception {
+    void testUpdateValidBid() throws Exception {
         BidCreateDto validBid= TestDatas.getValidBid();
         int id = 1;
         Mockito.when(bidService.updateBid(id,validBid)).thenReturn(true);
@@ -121,7 +102,7 @@ public class BidControllerUnitTest {
                 .andExpect(status().isOk());
     }
     @Test
-    void updateInvalidBid() throws Exception {
+    void testUpdateInvalidBidReturnBadRequest() throws Exception {
         BidCreateDto invalidBid= TestDatas.getInvalidBid();
         int id = 1;
         Mockito.when(bidService.updateBid(id,invalidBid)).thenReturn(true);
@@ -135,7 +116,7 @@ public class BidControllerUnitTest {
     }
 
     @Test
-    void updateNoneExistentBidWithValidData() throws Exception {
+    void testUpdateNoneExistentBidWithValidDataReturnsBadRequest() throws Exception {
         BidCreateDto validBid= TestDatas.getInvalidBid();
         int id = 444;
         Mockito.when(bidService.updateBid(id,validBid)).thenReturn(false);
@@ -149,7 +130,7 @@ public class BidControllerUnitTest {
     }
 
     @Test
-    void deleteBidById() throws Exception {
+    void testdeleteBidById() throws Exception {
         int id=1;
         mockMvc.perform(delete("/bid/"+id)).andExpect(status().isOk());
         Mockito.verify(bidService).deleteBidById(id);

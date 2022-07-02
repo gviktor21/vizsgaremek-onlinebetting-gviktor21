@@ -9,9 +9,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gviktor.onlinebet.TestDatas;
 import com.gviktor.onlinebet.dto.create.ParticipantCreateDto;
 import com.gviktor.onlinebet.dto.show.ParticipantShowDto;
-import com.gviktor.onlinebet.model.SportType;
 import com.gviktor.onlinebet.service.ParticipantService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -24,7 +24,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @WebMvcTest(ParticipantController.class)
@@ -36,39 +35,9 @@ class ParticipantControllerTest {
 
     @Autowired
     MockMvc mockMvc;
-    private List<ParticipantShowDto> getParticipants(){
-        List<ParticipantShowDto> participants = new ArrayList<>();
-
-        ParticipantShowDto participantShowDto1 = new ParticipantShowDto();
-        participantShowDto1.setParticipantId(1);
-        participantShowDto1.setName("Viktor");
-        participantShowDto1.setSportType(SportType.ROADRACECYCLING);
-
-        ParticipantShowDto participantShowDto2 = new ParticipantShowDto();
-        participantShowDto2.setParticipantId(2);
-        participantShowDto2.setName("Soros");
-        participantShowDto2.setSportType(SportType.FORMULAONE);
-
-        participants.add(participantShowDto1);
-        participants.add(participantShowDto2);
-        return participants;
-    }
-
-    private ParticipantCreateDto getValidParticipant(){
-        ParticipantCreateDto participantCreateDto = new ParticipantCreateDto();
-        participantCreateDto.setName("Viktor");
-        participantCreateDto.setSportType(SportType.FORMULAONE);
-        return participantCreateDto;
-    }
-    private ParticipantCreateDto getInvalidParticipant(){
-        ParticipantCreateDto participantCreateDto = new ParticipantCreateDto();
-        participantCreateDto.setName("");
-        participantCreateDto.setSportType(SportType.FORMULAONE);
-        return participantCreateDto;
-    }
     @Test
-    void getAllParticipant() throws Exception {
-        List<ParticipantShowDto> participants = getParticipants();
+    void testGetAllParticipantReturnsListOfParticipant() throws Exception {
+        List<ParticipantShowDto> participants = TestDatas.getParticipants();
         Mockito.when(service.getAllParticipant()).thenReturn(participants);
         mockMvc.perform(get("/participant"))
                 .andExpect(status().isOk())
@@ -81,8 +50,8 @@ class ParticipantControllerTest {
     }
 
     @Test
-    void addValidParticipant() throws Exception {
-        ParticipantCreateDto participantCreateDto = getValidParticipant();
+    void testAddValidParticipant() throws Exception {
+        ParticipantCreateDto participantCreateDto = TestDatas.getValidParticipant();
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(post("/participant")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -92,8 +61,8 @@ class ParticipantControllerTest {
     }
 
     @Test
-    void addInvalidParticipant() throws Exception {
-        ParticipantCreateDto participantCreateDto = getInvalidParticipant();
+    void testAddInvalidParticipantReturnsBadeRequest() throws Exception {
+        ParticipantCreateDto participantCreateDto = TestDatas.getInvalidParticipant();
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(post("/participant")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -103,8 +72,8 @@ class ParticipantControllerTest {
     }
 
     @Test
-    void getParticipant() throws Exception {
-        ParticipantShowDto participantShowDto = getParticipants().get(0);
+    void testGetParticipantById() throws Exception {
+        ParticipantShowDto participantShowDto = TestDatas.getParticipants().get(0);
         Mockito.when(service.getParticipantById(participantShowDto.getParticipantId())).thenReturn(participantShowDto);
         mockMvc.perform(get("/participant/"+ participantShowDto.getParticipantId()))
                 .andExpect(status().isOk())
@@ -114,8 +83,8 @@ class ParticipantControllerTest {
     }
 
     @Test
-    void modifyValidParticipant() throws Exception {
-        ParticipantCreateDto participantUpdateDao = getValidParticipant();
+    void testModifyValidParticipant() throws Exception {
+        ParticipantCreateDto participantUpdateDao = TestDatas.getValidParticipant();
         int id=1;
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(service.updateParticipant(id,participantUpdateDao)).thenReturn(true);
@@ -126,8 +95,8 @@ class ParticipantControllerTest {
                 .andExpect(status().isOk());
     }
     @Test
-    void modifyInvalidParticipant() throws Exception {
-        ParticipantCreateDto participantUpdateDao = getInvalidParticipant();
+    void testModifyInvalidParticipantReturnsBadRequest() throws Exception {
+        ParticipantCreateDto participantUpdateDao = TestDatas.getInvalidParticipant();
         int id=1;
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(service.updateParticipant(id,participantUpdateDao)).thenReturn(true);
@@ -139,8 +108,8 @@ class ParticipantControllerTest {
     }
 
     @Test
-    void modifyNotExistingParticipantWithValidFields() throws Exception {
-        ParticipantCreateDto participantUpdateDao = getValidParticipant();
+    void testModifyNotExistingParticipantWithValidFieldsReturnsBadRequest() throws Exception {
+        ParticipantCreateDto participantUpdateDao = TestDatas.getValidParticipant();
         int id=999;
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(service.updateParticipant(id,participantUpdateDao)).thenReturn(false);
@@ -152,7 +121,7 @@ class ParticipantControllerTest {
 
     }
     @Test
-    void deleteParticipant() throws Exception {
+    void testDeleteParticipant() throws Exception {
         int id=1;
         mockMvc.perform(delete("/participant/"+id))
         .andExpect(status().isOk());

@@ -1,6 +1,6 @@
 package com.gviktor.onlinebet.service;
 
-import com.gviktor.onlinebet.controller.TestDatas;
+import com.gviktor.onlinebet.TestDatas;
 import com.gviktor.onlinebet.dto.create.EventCreateDto;
 import com.gviktor.onlinebet.dto.show.EventShowDto;
 import com.gviktor.onlinebet.model.Event;

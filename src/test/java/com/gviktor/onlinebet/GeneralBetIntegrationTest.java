@@ -1,6 +1,5 @@
 package com.gviktor.onlinebet;
 
-import com.gviktor.onlinebet.controller.TestDatas;
 import com.gviktor.onlinebet.dto.create.BidAppUserCreateDto;
 import com.gviktor.onlinebet.dto.create.BidCreateDto;
 import com.gviktor.onlinebet.dto.create.EventCreateDto;

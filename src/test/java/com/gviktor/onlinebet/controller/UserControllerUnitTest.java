@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.gviktor.onlinebet.TestDatas;
 import com.gviktor.onlinebet.dto.create.BidAppUserCreateDto;
 import com.gviktor.onlinebet.dto.show.BidAppUserShowDto;
 import com.gviktor.onlinebet.service.UserService;
@@ -21,7 +22,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -37,7 +37,7 @@ class UserControllerUnitTest {
 
     @Test
     void testGetAllUser() throws Exception {
-        List<BidAppUserShowDto> userShows = getUsers();
+        List<BidAppUserShowDto> userShows = TestDatas.getUsers();
 
         Mockito.when(userService.getAllUser()).thenReturn(userShows);
         mockMvc.perform(get("/user"))
@@ -48,21 +48,9 @@ class UserControllerUnitTest {
                 .andExpect(jsonPath("$[0].password",Matchers.is("passw")));
     }
 
-
-    private List<BidAppUserShowDto> getUsers(){
-        List<BidAppUserShowDto> userList = new ArrayList<>();
-        BidAppUserShowDto user1 = new BidAppUserShowDto();
-        user1.setUsername("viktor");
-        user1.setPassword("passw");
-        BidAppUserShowDto user2 = new BidAppUserShowDto();
-        user2.setPassword("passw2");
-        user2.setUsername("admin");
-        userList.add(user1);userList.add(user2);
-        return userList;
-    }
     @Test
     void testUpdateValidUser() throws Exception {
-        BidAppUserCreateDto updateUserbBody = getNewValidUser();
+        BidAppUserCreateDto updateUserbBody = TestDatas.getNewValidUser();
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(userService.modifyUser(updateUserbBody.getUsername(),updateUserbBody)).thenReturn(true);
         mockMvc.perform(put("/user/"+updateUserbBody.getUsername())
@@ -73,7 +61,7 @@ class UserControllerUnitTest {
     }
     @Test
     void testUpdateInvalidUserReturnsBadRequest() throws Exception {
-        BidAppUserCreateDto updateUserBody = getNewInValidUser();
+        BidAppUserCreateDto updateUserBody = TestDatas.getNewInValidUser();
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(userService.modifyUser(updateUserBody.getUsername(),updateUserBody)).thenReturn(true);
         mockMvc.perform(put("/user/"+updateUserBody.getUsername())
@@ -85,7 +73,7 @@ class UserControllerUnitTest {
 
     @Test
     void testUpdateValidUserSpecsAddedButNotExistReturnsBadRequest() throws Exception {
-        BidAppUserCreateDto updateUserBody = getNewValidUser();
+        BidAppUserCreateDto updateUserBody = TestDatas.getNewValidUser();
         ObjectMapper objectMapper = new ObjectMapper();
         Mockito.when(userService.modifyUser(updateUserBody.getUsername(),updateUserBody)).thenReturn(false);
         mockMvc.perform(put("/user/"+updateUserBody.getUsername())
@@ -97,7 +85,7 @@ class UserControllerUnitTest {
 
     @Test
     void testAddValidUser() throws Exception {
-        BidAppUserCreateDto newUser = getNewValidUser();
+        BidAppUserCreateDto newUser = TestDatas.getNewValidUser();
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -106,8 +94,8 @@ class UserControllerUnitTest {
                 .andExpect(status().isOk());
     }
     @Test
-    void testAddInvalidUser() throws Exception {
-        BidAppUserCreateDto newUser = getNewInValidUser();
+    void testAddInvalidUserReturnsBadRequest() throws Exception {
+        BidAppUserCreateDto newUser = TestDatas.getNewInValidUser();
         ObjectMapper objectMapper = new ObjectMapper();
         mockMvc.perform(post("/user")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -116,30 +104,16 @@ class UserControllerUnitTest {
                 .andExpect(status().isBadRequest());
     }
 
-    private BidAppUserCreateDto getNewValidUser(){
-        BidAppUserCreateDto newUser = new BidAppUserCreateDto();
-        newUser.setPassword("password");
-        newUser.setUsername("username");
-        newUser.setEmail("valami@gmail.com");
-        newUser.setAccountLevel(1);
-        return newUser;
-    }
-    private BidAppUserCreateDto getNewInValidUser(){
-        BidAppUserCreateDto newUser = new BidAppUserCreateDto();
-        newUser.setPassword("pass");
-        newUser.setEmail("valami@gmail.com");
-        return newUser;
-    }
     @Test
-    void deleteUser() throws Exception {
+    void testDeleteUserById() throws Exception {
         String username="whatever";
         mockMvc.perform(delete("/user/"+username)).andExpect(status().isOk());
         Mockito.verify(userService).deleteUser(username);
     }
 
     @Test
-    void testgetUserById() throws Exception {
-        BidAppUserShowDto bidAppUserShowDto = getUsers().get(0);
+    void testGetUserByUsername() throws Exception {
+        BidAppUserShowDto bidAppUserShowDto = TestDatas.getUsers().get(0);
         Mockito.when(userService.getUserByUsername("viktor")).thenReturn(bidAppUserShowDto);
         mockMvc.perform(get("/user/viktor")).andExpect(status().isOk())
                 .andExpect(jsonPath("$.username",Matchers.is("viktor")))
