@@ -13,6 +13,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 //todo: tesztmetódusok nevét checkolni, eléírni test szót nem ártana
 //todo: TestData-ba kirakni testadatokat
 //todo: Pár mappert átnézni.
+// readme.md elkészítenni és postmannel az ottani endpointokat tesztelni
 @SpringBootApplication
 public class OnlinebetApplication {
 
