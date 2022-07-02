@@ -7,13 +7,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 //Nagy megcsinalni list
-//todo:loggingolás és swagger hozzáadása
 //todo: docker konténer elkészítése
-//todo: if-ekben előrerakni a bindingresultTesztelést.
 //todo: tesztmetódusok nevét checkolni, eléírni test szót nem ártana
 //todo: TestData-ba kirakni testadatokat
 //todo: Pár mappert átnézni.
-// readme.md elkészítenni és postmannel az ottani endpointokat tesztelni
+//todo: readme.md elkészítenni és postmannel az ottani endpointokat tesztelni
+//todo: DTO classocat átnevezni
 @SpringBootApplication
 public class OnlinebetApplication {
 

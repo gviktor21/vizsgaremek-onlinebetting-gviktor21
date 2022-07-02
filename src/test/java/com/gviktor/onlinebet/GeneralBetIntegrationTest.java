@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +31,12 @@ public class GeneralBetIntegrationTest {
         EventCreate eventCreate = TestDatas.getValidEventToPost();
         postEvent(eventCreate,urlEvent);
     }
+    private void postPastEvent() {
+        EventCreate eventCreate = TestDatas.getValidEventToPost();
+        eventCreate.setStartDate(LocalDate.now().minusDays(10));
+        postEvent(eventCreate,urlEvent);
 
+    }
     private void postUserWithMoney(){
         BidAppUserCreate bidAppUserCreate =TestDatas.getUsersToPost().get(0);
         bidAppUserCreate.setBalance(1000);
@@ -48,6 +54,7 @@ public class GeneralBetIntegrationTest {
         bidCreate2.setDate(bidCreate1.getDate().minusDays(2));
         bidCreate2.setPrize(200);
         bidCreate2.setUsername(bidCreate1.getUsername());
+
         bidsToPost.add(bidCreate1);
         bidsToPost.add(bidCreate2);
         return bidsToPost;
@@ -125,7 +132,14 @@ public class GeneralBetIntegrationTest {
     @Test
     @Order(4)
     public void addBidForPastEventReturnsBadRequest(){
+        postPastEvent();
+        BidCreate bidToNewEvent = getPostedBids().get(0);
+        bidToNewEvent.setEventId(2);
+        HttpEntity<BidCreate> httpEntity = createHttpEntity(bidToNewEvent);
+        ResponseEntity<Void> responseEntity= testRestTemplate.exchange(url,HttpMethod.POST,httpEntity,Void.class);
+        assertEquals(HttpStatus.BAD_REQUEST,responseEntity.getStatusCode());
     }
+
 
     @Test
     @Order(5)
@@ -134,12 +148,17 @@ public class GeneralBetIntegrationTest {
         String putUrl =url+"/"+getExpectedBids().get(0).getBidId();
 
         HttpEntity<BidCreate> httpEntity = createHttpEntity(updatedBidData);
-        ResponseEntity<Void> responseEntity= testRestTemplate.exchange(url,HttpMethod.PUT,httpEntity,Void.class);
+        ResponseEntity<Void> responseEntity= testRestTemplate.exchange(putUrl,HttpMethod.PUT,httpEntity,Void.class);
         assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
 
         ResponseEntity<BidShow> responseEntityResult= testRestTemplate.getForEntity(putUrl,BidShow.class);
         BidShow actual = responseEntityResult.getBody();
         assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
+        assertEquals(updatedBidData.getBidType(),actual.getBidType());
+        assertEquals(updatedBidData.getBidAmount(),actual.getBidAmount());
+        assertEquals(updatedBidData.getPrize(),actual.getPrize());
+        assertEquals(getExpectedBids().get(0).getUser(),actual.getUser());
+        assertEquals(getExpectedBids().get(0).getBidEvent(),actual.getBidEvent());
 
     }
 
@@ -160,11 +179,11 @@ public class GeneralBetIntegrationTest {
 
     private void postBid(BidCreate bid, String url){
         HttpEntity<BidCreate> httpEntity = createHttpEntity(bid);
-        System.out.println(testRestTemplate.postForEntity(url,httpEntity,String.class).getStatusCode());
+        testRestTemplate.postForEntity(url,httpEntity,String.class).getStatusCode();
     }
     private void postEvent(EventCreate eventCreate, String url){
         HttpEntity<EventCreate> httpEntity = createHttpEntity(eventCreate);
-        System.out.println(testRestTemplate.postForEntity(url,httpEntity,String.class).getStatusCode());
+        testRestTemplate.postForEntity(url,httpEntity,String.class).getStatusCode();
     }
     private HttpEntity<EventCreate> createHttpEntity(EventCreate event){
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -179,7 +198,7 @@ public class GeneralBetIntegrationTest {
     }
     private void postBidUsers(BidAppUserCreate bidAppUserCreate,String url){
         HttpEntity<BidAppUserCreate> httpEntity = createHttpEntity(bidAppUserCreate);
-        System.out.println(testRestTemplate.postForEntity(url,httpEntity,String.class).getStatusCode());
+        testRestTemplate.postForEntity(url,httpEntity,String.class).getStatusCode();
     }
 
     private HttpEntity<BidAppUserCreate> createHttpEntity(BidAppUserCreate bidAppUserCreate){
@@ -190,9 +209,6 @@ public class GeneralBetIntegrationTest {
     private void hasTheSameElements(BidShow[] expectedBid){
         List<BidShow> listExpected = getExpectedBids();
         List<BidShow> listActual = Arrays.asList(expectedBid);
-        listActual.forEach(System.out::println);
-        System.out.println("-----------------------------------------------------------");
-        listExpected.forEach(System.out::println);
         assertTrue(listActual.size()== listExpected.size() && listExpected.containsAll(listActual) && listActual.containsAll(listExpected));
     }
 }

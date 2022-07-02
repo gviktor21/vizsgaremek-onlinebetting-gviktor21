@@ -76,14 +76,19 @@ public class BidService {
         return bidAppUser.getBalance()-bidCreate.getBidAmount()>=0;
     }
     private boolean isNotPastEvent(Event event, BidCreate bidCreate){
+        System.out.println("PASTEVENT: "+bidCreate.getDate().isBefore(event.getStartDate()));
         return bidCreate.getDate().isBefore(event.getStartDate());
     }
     public boolean updateBid(int id, BidCreate bidCreate) {
         if (!bidRepository.findById(id).isPresent() || !validateNewBid(bidCreate)) {
             return false;
         }
-        Bid bid = mapper.map(bidCreate, Bid.class);
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+        Bid bid = mapper.map(bidCreate,Bid.class);
         bid.setBidId(id);
+        bid.setUser(userRepository.findById(bidCreate.getUsername()).get());
+        bid.setBidEvent(eventRepository.findById(bidCreate.getEventId()).get());
+        mapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STANDARD);
         bidRepository.save(bid);
         return true;
     }

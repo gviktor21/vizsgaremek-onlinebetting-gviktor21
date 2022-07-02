@@ -35,7 +35,7 @@ public class UserService {
 
     public void addUser(BidAppUserCreate bidAppUserCreate){
         BidAppUser bidAppUser =mapper.map(bidAppUserCreate,BidAppUser.class);
-        repository.saveAndFlush(bidAppUser);
+        repository.save(bidAppUser);
     }
     public boolean modifyUser(String username, BidAppUserCreate bidAppUserCreate){
         BidAppUser bidAppUser =mapper.map(bidAppUserCreate,BidAppUser.class);
