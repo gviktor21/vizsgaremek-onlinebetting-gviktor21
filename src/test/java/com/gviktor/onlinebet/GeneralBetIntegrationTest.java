@@ -52,6 +52,13 @@ public class GeneralBetIntegrationTest {
         bidsToPost.add(bidCreate2);
         return bidsToPost;
     }
+    private  BidCreate getUpdatedBidData(){
+        BidCreate bidCreate = getPostedBids().get(0);
+        bidCreate.setBidAmount(99);
+        bidCreate.setPrize(990);
+        bidCreate.setBidType("Updated");
+        return bidCreate;
+    }
     private List<BidShow> getExpectedBids(){
         List<BidShow> expectedBids= new ArrayList<>();
 
@@ -123,6 +130,16 @@ public class GeneralBetIntegrationTest {
     @Test
     @Order(5)
     public void testUpdateBid(){
+        BidCreate updatedBidData = getUpdatedBidData();
+        String putUrl =url+"/"+getExpectedBids().get(0).getBidId();
+
+        HttpEntity<BidCreate> httpEntity = createHttpEntity(updatedBidData);
+        ResponseEntity<Void> responseEntity= testRestTemplate.exchange(url,HttpMethod.PUT,httpEntity,Void.class);
+        assertEquals(HttpStatus.OK,responseEntity.getStatusCode());
+
+        ResponseEntity<BidShow> responseEntityResult= testRestTemplate.getForEntity(putUrl,BidShow.class);
+        BidShow actual = responseEntityResult.getBody();
+        assertEquals(responseEntity.getStatusCode(), HttpStatus.OK);
 
     }
 

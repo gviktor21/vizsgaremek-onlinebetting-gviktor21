@@ -4,16 +4,14 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 //Nagy megcsinalni list
-//todo: hozzáadni a maradék service-eket és a Controllereket, kivéve a 6-os és SkandinávLottó-t (Csak akkor lesz leimplementálva ha marad rá idő)
 //todo:loggingolás és swagger hozzáadása
 //todo: docker konténer elkészítése
 //todo: if-ekben előrerakni a bindingresultTesztelést.
-//todo: legyen a bidType EventType vagy elhagyható
 //todo: tesztmetódusok nevét checkolni, eléírni test szót nem ártana
 //todo: TestData-ba kirakni testadatokat
-//todo: Pár IntegrációsTeszt.
 //todo: Pár mappert átnézni.
 @SpringBootApplication
 public class OnlinebetApplication {
