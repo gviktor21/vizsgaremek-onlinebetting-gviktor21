@@ -5,7 +5,7 @@ RUN mvn dependency:go-offline
 COPY ./src ./src
 RUN mvn clean package -DskipTest
 
-FROM openjdk:11-alpine
+FROM openjdk:11-slim
 WORKDIR /app
 COPY --from=builder /app/target/onlinebet.jar ./app.jar
 CMD java -jar ./app.jar

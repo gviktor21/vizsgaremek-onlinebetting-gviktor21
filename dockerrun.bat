@@ -1,0 +1,1 @@
+docker run --rm --name onlineBetApp -p 8080:8080 -it onlinebet
