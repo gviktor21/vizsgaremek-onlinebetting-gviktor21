@@ -10,7 +10,6 @@ import javax.persistence.OneToMany;
 import java.time.LocalDate;
 import java.util.List;
 
-//todo change some types
 @Entity
 @Data
 @NoArgsConstructor
