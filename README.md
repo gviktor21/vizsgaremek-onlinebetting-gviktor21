@@ -3,7 +3,7 @@
 ## Rövid leírás:
 Ez a backend része egy olyan online fogadást lebonyolító alkalmazásnak (weboldalnak), ahol lehet adott sportesemény győztesére fogadni vagy lottó számaira „fogadni”. A felhasználó magának tölti föl az egyenlegét. Ezzel a feltöltött mennyiségből tud fogadásokat lebonyolítani.
 
-## Az egyed-kapcsolat diagram alapján létrehozott táblák:
+## Adatbázis Táblák/ Entitások. 
 
 <b>BIDAPPUSER</b>(username, address, birthDate, gender, password, balance, email, account_level);
 
@@ -37,22 +37,32 @@ Ez a backend része egy olyan online fogadást lebonyolító alkalmazásnak (web
 
 <b>POST</b> */user* Az adott felhasználó feltolt egy adott sporteseményre egy fogadást.
 
-<b>POST</b> */admin/{username}/result/sport/event_id* Az adott felhasználó ha admin jogokkal rendelkezik feltölti egy adott sporteseménynek az eredményét (beállítani a győztest). Ezután kiértékelődnek az adott győztesnek az „odds-jai és ez alapján változhatnak az egyenlegek. 
+<b>PUT</b> *user/{username}* Módosás feltöltése a {username} felhasnálóhoz.
 
-<b>POST</b> */bid* Ugyanaz mint az előző csak az ötöslottóval. Ezután kiértékelődnek a lottószelvények és ez alapján változhatnak az egyenlegek. 
+<b>POST</b> */bid* Egy fogadás feltöltése. 
 
-<b>PUT</b> *user/{username}* 
+ <b>GET</b> */user/{username}* Adott nevű felhasunáló lekérése.
 
-<b>GET</b> *sport/{event_id}/participants* Lekérdezni az adott sporteseményen kik induln(t)ak.
+ <b>DELETE</b> */bid/{id}* Töröljük egy fogadást az id-ja alapján.
 
-<b>DELETE</b> *user/{username}/bid/{bid_id}* A felhasználó kísérletet tesz egy adott fogadást visszavonni.
+<b>POST</b> */bidlotto5* Hozzáadunk egy lotto5 fogadást. Gyakorlatilag úgy kell elképzelni mint, ha kitöltenénk egy lottószelvényt.
+
+## A jelenlegi állapot:
+Csak az ötöslottó lett megvalósítva, a hatosra és a skandinávra nem maradt idő. A sportfogadás rész is igen gyéren lett tesztelve.
+- 13 entitás(9 van használva). Több n-1 kapcsolat.
+- 9 kontroller és szervíz osztály.
+- 45 enpoint( Jópár nem lett tesztelve, tehát nem garantált a működésük )
+- Az itt felsorolt endpointok tesztelve vannak és működnek.
+- Van loggolás.
+- Flyway migráció van.
+- Van validáció.
+- Swagger /openapi dokumentáció nincs. Az okokról lentebb írok.
+- Tesztlefedettség: 60% feletti (Beépített Intellij plugin szerint). Van 9 db unit teszt a kontroller osztályokra. Három a szervíz osztályokra. Továbbá két integrációs tesztosztály. Tehát összesen 117 db teszteset van.
+
+## Az alkalmazás telepítése és indítása:
 
 
-## A jelnlegi állapot:
-
-A participant, event és az event CRUD-ok tesztelve vannak. A többinél még biztosan változni fog a 'Business Logic'.
-
-## Használati utasítás:
+## Használati utasítás/ Endpointok működése.
 Itt egy példasorozton keresztül mutatom be az endpointok működését. A példák sorrendje számíthat. A példában az alkalmazás a 'localhost' 8080-as portján keresztül érhető el.
 
 ### 1. endpoint: <b>POST</b> */event*
@@ -121,7 +131,28 @@ Példa: Ha lekérjük a példában használt felhasználót akkor, ha sikeresen 
 ### 6. Endpoint: <b>DELETE</b> */bid/{id}*
 Törölünk egy fogadást az id-ja alapján.
 Fun fact: A pénzt nem kapja vissza a felhasználó. :) (Idő hiányában nem lett implementálva)
-### 7. Endpoint:
+### 7. Endpoint: <b>POST</b> /bidlotto5
+Hozzáad egy lotto5,
 
+## Miért nincs swagger?
 
+Tesztírás közben előjött, ahhoz hogy a 'jackson' 'szerilizálni' tudjon 'LocalDate'-eket, hozzá kellet adnom a következő függőséget:
 
+```
+<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+</dependency>
+```
+
+Ez viszon  valamilyen konfliktusban áll a Swagger-el, amit használok:
+```
+        <dependency>-->
+			<groupId>org.springdoc</groupId>-->
+			<artifactId>springdoc-openapi-ui</artifactId>-->
+			<version>1.6.9</version>-->
+		</dependency>-->
+```
+Mivel a swagger 2-őt annyira nem ismertem ezért kikommentelve de benne maradt a programban. Próbálkoztam többmindennel is, hogy műkösésre bírjam a kettőt de nem ment.  A probléma nem ismeretlen:
+https://stackoverflow.com/questions/51636477/conflict-between-swagger2-and-jackson-datatype-jsr310-in-spring-boot-application
+https://stackoverflow.com/questions/70937537/swagger-generated-code-date-issue-java-8-date-time-type-java-time-offsetdatetim
