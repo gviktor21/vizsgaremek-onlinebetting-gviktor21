@@ -41,7 +41,6 @@ public class BidLotto5Service {
     public boolean addBid5Lotto(BidLotto5CreateDto bidLotto5CreateDto) {
         if (testNumbers(bidLotto5CreateDto) && testIfValidBidAndEventExists(bidLotto5CreateDto)){
             BidLotto5 bidLotto5 = mapper.map(bidLotto5CreateDto,BidLotto5.class);
-            System.out.println(bidLotto5);
             bidLotto5Repository.save(mapper.map(bidLotto5CreateDto,BidLotto5.class));
             return true;
         }

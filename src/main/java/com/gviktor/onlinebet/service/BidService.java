@@ -74,7 +74,6 @@ public class BidService {
         return bidAppUser.getBalance()- bidCreateDto.getBidAmount()>=0;
     }
     private boolean isNotPastEvent(Event event, BidCreateDto bidCreateDto){
-        System.out.println("PASTEVENT: "+ bidCreateDto.getDate().isBefore(event.getStartDate()));
         return bidCreateDto.getDate().isBefore(event.getStartDate());
     }
     public boolean updateBid(int id, BidCreateDto bidCreateDto) {
