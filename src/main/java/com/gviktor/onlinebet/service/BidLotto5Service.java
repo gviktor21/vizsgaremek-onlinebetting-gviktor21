@@ -2,10 +2,7 @@ package com.gviktor.onlinebet.service;
 
 import com.gviktor.onlinebet.dto.create.BidLotto5CreateDto;
 import com.gviktor.onlinebet.dto.show.BidLotto5ShowDto;
-import com.gviktor.onlinebet.model.Bid;
-import com.gviktor.onlinebet.model.BidLotto5;
-import com.gviktor.onlinebet.model.Event;
-import com.gviktor.onlinebet.model.EventType;
+import com.gviktor.onlinebet.model.*;
 import com.gviktor.onlinebet.repository.BidLotto5Repository;
 import com.gviktor.onlinebet.repository.BidRepository;
 import com.gviktor.onlinebet.repository.EventRepository;
@@ -43,6 +40,8 @@ public class BidLotto5Service {
 
     public boolean addBid5Lotto(BidLotto5CreateDto bidLotto5CreateDto) {
         if (testNumbers(bidLotto5CreateDto) && testIfValidBidAndEventExists(bidLotto5CreateDto)){
+            BidLotto5 bidLotto5 = mapper.map(bidLotto5CreateDto,BidLotto5.class);
+            System.out.println(bidLotto5);
             bidLotto5Repository.save(mapper.map(bidLotto5CreateDto,BidLotto5.class));
             return true;
         }
@@ -51,8 +50,7 @@ public class BidLotto5Service {
 
     private boolean testIfValidBidAndEventExists(BidLotto5CreateDto bidLotto5CreateDto) {
         Bid bid = bidRepository.findById(bidLotto5CreateDto.getBidId()).orElse(Bid.builder().bidId(-1).build());
-        Optional<Event> event = eventRepository.findById(bid.getBidId());
-        return (event.isPresent() && event.get().getEventType().equals(EventType.LOTTO5) && event.get().getStartDate().isAfter(bid.getDate()));
+        return (bid.getBidId()!=-1 && bid.getBidEvent().getEventType().equals(EventType.LOTTO5) && bid.getBidEvent().getStartDate().isAfter(bid.getDate()));
     }
 
     public BidLotto5ShowDto getBidLotto5ById(int id) {
@@ -63,7 +61,7 @@ public class BidLotto5Service {
         Optional<BidLotto5> bidLotto5 = bidLotto5Repository.findById(id);
         if (bidLotto5.isPresent() && testNumbers(bidLotto5CreateDto)){
             bidLotto5CreateDto.setBidId(id);
-            bidLotto5Repository.save(mapper.map(bidLotto5, BidLotto5.class));
+            bidLotto5Repository.save(mapper.map(bidLotto5CreateDto, BidLotto5.class));
             return true;
         }
         return false;
